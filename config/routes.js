@@ -26,15 +26,15 @@
  *
  */
 
-module.exports.routes = {
+exports.routes = {
 
   // By default, your root route (aka home page) points to a view
   // located at `views/home/index.ejs`
   //
   // (This would also work if you had a file at: `/views/home.ejs`)
-  '/': {
-    view: 'index'
-  }
+  // '/': {
+  //   view: 'index'
+  // }
 
   /*
   // But what if you want your home page to display
@@ -164,3 +164,20 @@ module.exports.routes = {
  * See `config/404.js` to adjust your app's 404 logic.
  */
 
+
+
+/**
+ * Map Angular routes to index view
+ */
+
+var angularView = {
+  view: 'index'
+};
+
+[
+  '/',
+  '/dashboard'
+].
+  forEach(function(path) {
+    exports.routes[path] = angularView;
+  });
