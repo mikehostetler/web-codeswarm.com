@@ -15,6 +15,11 @@
 module.exports.adapters = {
 
   default: 'mongo',
-  schema: true
+  schema: true,
+
+  mongo: {
+    module: 'sails-mongo',
+    schema: true
+  }
 
 };
