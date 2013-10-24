@@ -48,6 +48,7 @@ module.exports = function (grunt) {
 
     'linker/js/vendor/angular/angular.min.js',
     'linker/js/vendor/angular/angular-route.min.js',
+    'linker/js/vendor/angular/angular-resource.min.js',
 
     // Bring in the socket.io client
     'linker/js/vendor/socket.io.js',

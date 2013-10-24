@@ -2,7 +2,7 @@
 (function (global, io, Strider) {
 
   console.log('HERE');
-  var BrowserSwarmApp = angular.module('BrowserSwarmApp', ['ngRoute']);
+  var BrowserSwarmApp = angular.module('BrowserSwarmApp', ['ngRoute', 'ngResource']);
 
   /// Expose BrowserSearm to Controllers
   /// TODO:
@@ -15,10 +15,49 @@
 
   console.log('Strider:', Strider);
   BrowserSwarmApp.
-    config(['$routeProvider', '$locationProvider', configureBrowserSwarmApp]).
-    factory('Strider', [Strider]);
+    config(['$routeProvider', '$locationProvider', '$httpProvider', configureBrowserSwarmApp]).
+    factory('Strider', ['$resource', Strider]);
 
-  function configureBrowserSwarmApp($routeProvider, $locationProvider) {
+  function configureBrowserSwarmApp($routeProvider, $locationProvider, $httpProvider) {
+
+    /// HTTP
+
+    /// Always do HTTP requests with credentials,
+    /// effectively sending out the session cookie
+    $httpProvider.defaults.withCredentials = true;
+
+    var interceptor = ['$rootScope', '$q', function($scope, $q) {
+
+      function success(response) {
+        return response;
+      }
+
+      function error(response) {
+        var status = response.status;
+        console.log(response);
+
+        var resp = response.data;
+        if (resp) try { resp = JSON.parse(resp); } catch(err) { }
+
+        if (resp.message) resp = resp.message;
+        if (! resp) {
+          resp = 'Error in response';
+          if (status) resp += ' (' + status + ')';
+        }
+
+        $scope.$emit('error', new Error(resp));
+
+        return $q.reject(response);
+      }
+
+      return function (promise) {
+        return promise.then(success, error);
+      }
+
+    }];
+
+    $httpProvider.responseInterceptors.push(interceptor);
+
 
     /// Enable hashbang-less routes
 
@@ -30,6 +69,10 @@
       when('/dashboard', {
         templateUrl: '/partials/dashboard.html',
         controller: 'DashboardCtrl'
+      }).
+      when('/login', {
+        templateUrl: '/partials/login.html',
+        controller: 'LoginCtrl'
       });
   }
 

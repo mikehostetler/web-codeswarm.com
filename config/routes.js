@@ -176,6 +176,7 @@ var angularView = {
 
 [
   '/',
+  '/login',
   '/dashboard'
 ].
   forEach(function(path) {

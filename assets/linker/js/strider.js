@@ -1,22 +1,43 @@
 (function(global, io) {
 
-	console.log('Strider');
-	function BuildStrider(opts) {
-		return new Strider(opts);
+	function BuildStrider($resource) {
+		return new Strider($resource);
 	}
 
-	function Strider(opts) {
-		console.log('Strider 2', this);
+	function Strider($resource, opts) {
 		if (! opts) opts = {};
 		if (typeof opts == 'string')
 			opts = { url: opts };
 
 		this.url = opts.url || '//localhost:3000';
+
+		/// Restful API setup
+		var apiBase = this.url + '/api';
+		var loginURL = this.url + '/login';
+		this.Jobs =    $resource(apiBase + '/jobs');
+		this.Session = $resource(apiBase + '/session');
+		// this.Session = $resource(apiBase + '/session', {}, {
+		// 	get: {
+		// 		method: 'GET',
+		// 		withCredentials: true,
+		// 		url: apiBase + '/session'
+		// 	}
+		// });
+		// ,  {
+		// 	login: {
+		// 		method: 'POST',
+		// 		url: loginURL
+		// 	}
+		// });
+
+		console.log('Session:', this.Session);
 	}
 
 	var S = Strider.prototype;
 
 	S.connect = function connect($scope, cb) {
+
+		var self = this;
 		var socket = io.connect(this.url);
 		socket.on('connect', function() {
 			cb(socket);
