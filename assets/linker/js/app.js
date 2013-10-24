@@ -1,7 +1,6 @@
 
 (function (global, io, Strider) {
 
-  console.log('HERE');
   var BrowserSwarmApp = angular.module('BrowserSwarmApp', ['ngRoute', 'ngResource']);
 
   /// Expose BrowserSearm to Controllers
@@ -13,7 +12,6 @@
 
   /// App Configuration
 
-  console.log('Strider:', Strider);
   BrowserSwarmApp.
     config(['$routeProvider', '$locationProvider', '$httpProvider', configureBrowserSwarmApp]).
     factory('Strider', ['$resource', Strider]);
@@ -34,7 +32,6 @@
 
       function error(response) {
         var status = response.status;
-        console.log(response);
 
         var resp = response.data;
         if (resp) try { resp = JSON.parse(resp); } catch(err) { }
@@ -77,6 +74,8 @@
   }
 
   return;
+
+  /// This is from the Original Sails install, maybe reuse later:
 
 
   // as soon as this file is loaded, connect automatically,

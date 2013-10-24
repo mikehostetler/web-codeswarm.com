@@ -12,7 +12,6 @@
 
     $scope.login = function login(user) {
       var session = new (Strider.Session)(user);
-      console.log(session);
       session.$save(function() {
         $location.path('/dashboard');
       });
