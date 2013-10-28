@@ -92,8 +92,7 @@
     }
 
     socket.on('job.new', JS.newJob.bind(this));
-
-  }
+  };
 
 
   /// update - handle update event
@@ -110,7 +109,7 @@
       handler.apply(job, args);
     }
     if (!dontchange) this.changed();
-  }
+  };
 
 
   /// newJob - when server notifies of new job
@@ -144,7 +143,7 @@
     job.phase = 'environment';
     jobs.unshift(job);
     this.changed();
-  }
+  };
 
 
   /// job - find a job by id and access level
@@ -161,7 +160,7 @@
 
   JS.changed = function changed() {
     this.changeCallback();
-  }
+  };
 
 
   function cleanJob(job) {
