@@ -1,5 +1,11 @@
 (function(global, io) {
 
+  var socket;
+  var scopes = [];
+  var jobStore = global.JobStore();
+
+  global.Strider = BuildStrider;
+
   function BuildStrider($resource) {
     return new Strider($resource);
   }
@@ -9,25 +15,58 @@
     if (typeof opts == 'string')
       opts = { url: opts };
 
-    this.url = opts.url || '//localhost\\:3000';
+    this.url = opts.url || '//localhost:3000';
 
     /// Restful API setup
     var apiBase = this.url + '/api';
     var loginURL = this.url + '/login';
     this.Jobs =    $resource(apiBase + '/jobs');
     this.Session = $resource(apiBase + '/session');
+    this.jobs = jobStore.jobs;
   }
+
 
   var S = Strider.prototype;
 
-  S.connect = function connect($scope, cb) {
-    var self = this;
-    var socket = io.connect(this.url);
-    socket.on('connect', function() {
-      cb(socket);
+
+  /// changed - invoked when UI needs updating
+  function changed() {
+    scopes.forEach(function(scope) {
+      scope.$digest();
+    });
+  }
+
+
+  //// ---- Strider prototype functions
+
+  /// connect
+
+  S.connect = function(scope) {
+    if (! socket) {
+      socket = io.connect(this.url);
+
+      /// connects job store to new socket
+      jobStore.connect(socket, changed);
+    }
+    this.socket = socket;
+
+    scopes.push(scope);
+    scope.$on('$destroy', function() {
+      var found = false;
+      for (var i = 0 ; ! found && i < scopes.length; i ++) {
+        if (scopes[i] == scope) {
+          found = true;
+          scopes.splice(i, 1);
+        }
+      }
     });
   };
 
-  global.Strider = BuildStrider;
+
+  /// deploy
+
+  S.deploy = function deploy(project) {
+    this.socket.emit('deploy', project.name);
+  };
 
 })( window, window.io );

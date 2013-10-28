@@ -20,9 +20,9 @@
     </tr>
   </thead>
   <tbody>
-    <tr ng-repeat="job in jobs">
+    <tr ng-repeat="job in jobs.yours">
       <td class="deploy">
-        <a ng-click="deploy(job)"><i class="fa fa-cloud-upload"></i></a>
+        <a ng-click="deploy(job.project)"><i class="fa fa-cloud-upload"></i></a>
       </td>
       <td class="job-link">
         <a href="/{{job.project.name}}/job/{{job._id}}">{{job._id}}</a>
