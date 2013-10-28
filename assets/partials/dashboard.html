@@ -1,1 +1,65 @@
-<h1>Dashboard!!!!</h1>
+<h1>Dashboard</h1>
+
+<h2>Latest Builds:</h2>
+
+<h3>Your Projects</h3>
+
+<table id="job-list" class="table">
+  <thead>
+    <tr>
+      <th class="deploy-header"></th>
+      <th class="job-header"></th>
+      <th class="refresh-header"></th>
+      <th class="configure-header"></th>
+      <th>Project</th>
+      <th class="history"></th>
+      <th class="committer-header"></th>
+      <th class="commit-header"></th>
+      <th class="github-header"></th>
+      <th colspan="2">Duration</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="job in jobs">
+      <td class="deploy">
+        <a ng-click="startDeploy(job)">Deploy</a>
+      </td>
+      <td class="job-link">
+        <a href="/{{job.project.name}}/job/{{job._id}}">{{job._id}}</a>
+      </td>
+      <td class="refresh">
+        <a ng-click="startTest(job)">Retest</a>
+      </td>
+      <td class="configure">
+        <a href="/{{job.project.name}}/config">Configure</a>
+      </td>
+      <td class="project-name">
+        <a href="/{{job.project.name}}">{{job.project.name}}</a>
+      </td>
+      <td class="history">
+        <table class="last-builds">
+          <tbody>
+            <tr>
+              <td ng-repeat="pjob in job.project.prev" data-toggle="tooltip" data-original-title="{{pjob.id}} {{pjob.status}}" class="status-{{pjob.status}}"></td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+      <td class="committer">
+        <a href="{{job.trigger.author.id}}">{{job.trigger.author.email}}</a>
+      </td>
+      <td class="commit">
+        {{job.trigger.message}}
+      </td>
+      <td>
+        <a href="https://github.com/{{job.project.name}}">Github</a>
+      </td>
+      <td class="run-time">
+        <time class="duration seconds" duration="{{job.duration}}">{{job.duration / 1000}}s</time>
+      </td>
+      <td class="finished-at">
+        <time class="timeago">{{job.finished}}</time>
+      </td>
+    </tr>
+  </tbody>
+</table>

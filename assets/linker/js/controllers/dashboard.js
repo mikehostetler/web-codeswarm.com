@@ -10,10 +10,11 @@
     });
 
     function authenticated() {
-      Strider.Jobs.query(gotAllJobs);
+      Strider.Jobs.get(gotAllJobs);
 
       function gotAllJobs(allJobs) {
-        console.log('all jobs', allJobs);
+        $scope.jobs = allJobs.yours;
+        console.log($scope.jobs);
       }
     }
 

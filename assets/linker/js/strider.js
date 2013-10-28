@@ -9,7 +9,7 @@
     if (typeof opts == 'string')
       opts = { url: opts };
 
-    this.url = opts.url || '//localhost:3000';
+    this.url = opts.url || '//localhost\\:3000';
 
     /// Restful API setup
     var apiBase = this.url + '/api';
