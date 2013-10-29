@@ -1,0 +1,1019 @@
+    <div class="row-fluid job-page-intro ng-scope">
+      <div class="span12 job-title">
+
+        <div class="pull-right btn btn-warning ng-binding" ng-click="clearCache()" ng-disabled="clearingCache">
+          Clear Cache
+        </div>
+        <h3>
+
+          <span ng-show="!job.running &amp;&amp; repo.access_level &gt; 0" ng-click="startDeploy(job)" title="Retest &amp; Deploy" class="clickable test-and-deploy-action ng-hide">
+            <i class="icon-cloud-upload"></i>
+          </span>
+          <span ng-hide="job.running || repo.access_level &lt; 1" ng-click="startTest(job)" title="Retest" class="clickable test-only-action">
+            <i class="icon-refresh"></i>
+          </span>
+          <a href="/pgte/benchmark-tests/config" ng-hide="repo.access_level &lt; 1" title="Configure">
+            <i class="icon-wrench"></i>
+          </a>
+
+          <span class="job-repo">pgte/benchmark-tests</span>
+          <a href="https://github.com/pgte/benchmark-tests" target="_blank">
+            <i class="icon-github"></i>
+          </a>
+        </h3>
+
+      </div>
+    </div>
+    <div class="job-main ng-scope">
+        <div class="row-fluid job-wrap">
+
+
+          <div class="span8 job-left-col">
+            <div class="row-fluid errored" id="build-metadata">
+              <table>
+                <tbody>
+                  <tr class="dashboard-row">
+
+<td class="job-link">
+
+  <a href="/pgte/benchmark-tests/job/526e9183a3745d9d1d00003d">
+
+  <i ng-hide="job.nojobs" data-toggle="tooltip" class="icon-minus-sign error-text" data-original-title="errored"></i>
+  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
+  <span class="ng-binding">526e9183</span>
+  </a>
+</td>
+
+
+<td class="project-name ng-hide" ng-hide="page === 'build'">
+  <a href="/pgte/benchmark-tests/" class="ng-binding">
+
+  </a>
+</td>
+<td class="history ng-hide" ng-hide="page === 'build'">
+  <table class="last-builds">
+    <tbody><tr>
+      <!-- ngRepeat: pjob in job.project.prev -->
+    </tr>
+  </tbody></table>
+</td>
+
+<td class="committer">
+  <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
+    <!-- ngSwitchWhen: false --><img ng-switch-when="false" ng-src="" class="ng-scope">
+    <!-- ngSwitchDefault:  -->
+  </div>
+</td>
+<td class="commit-url" ng-switch="!!job.trigger.url">
+  <!-- ngSwitchWhen: true -->
+  <!-- ngSwitchDefault:  --><span class="small-text ng-scope ng-binding" ng-switch-default="">
+    <i class="trigger-icon icon-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
+    Manually Redeploying
+  </span>
+</td>
+
+<td class="github-link ng-hide" ng-hide="page === 'build'">
+  <a href="https://github.com/pgte/benchmark-tests" target="_blank">
+    <i class="icon-globe"></i>
+  </a>
+</td>
+
+<td class="run-time" ng-switch="job.status">
+  <!-- ngSwitchWhen: running -->
+  <!-- ngSwitchWhen: submitted -->
+  <!-- ngSwitchDefault:  --><time ng-switch-default="" class="duration ng-scope seconds" duration="3296" ng-hide="job.nojobs">3.2s</time>
+</td>
+<td class="finished-at" ng-switch="job.status === 'running'">
+  <!-- ngSwitchWhen: false --><span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
+    <time data-toggle="tooltip" data-placement="top" datetime="2013-10-28T16:32:07.765Z" class="timeago" data-original-title="" title="10/28/2013 4:32:07 PM">11 minutes ago</time>
+  </span>
+  <!-- ngSwitchWhen: true -->
+</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="row job-pre-console">
+              <div class="span12 job-pre-console-inner">
+
+
+              </div>
+            </div>
+
+
+
+
+            <div class="status-node plugin-status job-plugin-status" plugin-status="node" ng-show="show &amp;&amp; data.doTest">
+              <i class="icon-fixed-width icon-ellipsis-horizontal"></i>
+<strong>Node tests</strong>
+pending
+
+            </div>
+
+
+            <div class="console-output">
+              <i class="icon-gear icon-light icon-spin loading-icon ng-hide" ng-show="loading"></i>
+              <!-- ngRepeat: phase in phases --><div ng-repeat="phase in phases" class="phase phase phase-environment ng-hide" ng-class="{ collapsed: job.phases[phase].collapsed }" ng-show="job.phases[phase].commands.length">
+  <div class="title" ng-click="job.phases[phase].collapsed = !job.phases[phase].collapsed">
+    <i class="arrow icon-caret-down"></i>
+    <span class="name ng-binding">environment</span>
+    <span class="pull-right meta">
+      <time class="duration miliseconds" datetime="2013-10-28T16:32:04.660Z" since="" duration="0" data-original-title="">0ms</time>
+      <span class="exit-status ng-binding ng-hide" ng-show="job.phases[phase].exitCode">0</span>
+    </span>
+  </div>
+  <div class="commands" ng-hide="job.phases[phase].collapsed">
+    <!-- ngRepeat: command in job.phases[phase].commands -->
+  </div>
+</div><div ng-repeat="phase in phases" class="phase phase phase-prepare" ng-class="{ collapsed: job.phases[phase].collapsed }" ng-show="job.phases[phase].commands.length">
+  <div class="title" ng-click="job.phases[phase].collapsed = !job.phases[phase].collapsed">
+    <i class="arrow icon-caret-down"></i>
+    <span class="name ng-binding">prepare</span>
+    <span class="pull-right meta">
+      <time class="duration" datetime="" since="" duration="" data-original-title=""></time>
+      <span class="exit-status ng-binding" ng-show="job.phases[phase].exitCode">-1</span>
+    </span>
+  </div>
+  <div class="commands" ng-hide="job.phases[phase].collapsed">
+    <!-- ngRepeat: command in job.phases[phase].commands --><div ng-repeat="command in job.phases[phase].commands" ng-class="{ comment: command.comment }" class="command plugin-github">
+      <div class="title" ng-click="command.collapsed = !command.collapsed">
+        <span class="prompt ng-binding">$</span> <span class="command-text ng-binding">git clone --recursive https://[username]:[password]@github.com/pgte/benchmark-tests.git .</span> <i class="icon-plus plus ng-hide" ng-show="command.collapsed"></i>
+        <span class="meta pull-right">
+          <span class="plugin ng-binding">github</span>
+          <time datetime="2013-10-28T16:32:04.668Z" since="2013-10-28T16:32:04.668Z" duration="2088" data-original-title="" class="seconds">2s</time>
+          <span class="exit-status ng-binding" toggle="tooltip" ng-show="job.phases[phase].exitCode" data-original-title="exit code">-1</span>
+        </span>
+      </div>
+      <pre class="job-output" ng-hide="command.collapsed" raw-html="command.merged | ansi">Cloning into '.'...
+</pre>
+    </div><div ng-repeat="command in job.phases[phase].commands" ng-class="{ comment: command.comment }" class="command plugin-github">
+      <div class="title" ng-click="command.collapsed = !command.collapsed">
+        <span class="prompt ng-binding">$</span> <span class="command-text ng-binding">git checkout -qf master</span> <i class="icon-plus plus ng-hide" ng-show="command.collapsed"></i>
+        <span class="meta pull-right">
+          <span class="plugin ng-binding">github</span>
+          <time datetime="2013-10-28T16:32:06.757Z" since="2013-10-28T16:32:06.757Z" duration="33" data-original-title="" class="miliseconds">33ms</time>
+          <span class="exit-status ng-binding" toggle="tooltip" ng-show="job.phases[phase].exitCode" data-original-title="exit code">-1</span>
+        </span>
+      </div>
+      <pre class="job-output" ng-hide="command.collapsed" raw-html="command.merged | ansi"></pre>
+    </div><div ng-repeat="command in job.phases[phase].commands" ng-class="{ comment: command.comment }" class="command plugin-node">
+      <div class="title" ng-click="command.collapsed = !command.collapsed">
+        <span class="prompt ng-binding">$</span> <span class="command-text ng-binding">npm install --color=always</span> <i class="icon-plus plus ng-hide" ng-show="command.collapsed"></i>
+        <span class="meta pull-right">
+          <span class="plugin ng-binding">node</span>
+          <time datetime="2013-10-28T16:32:06.794Z" since="2013-10-28T16:32:06.794Z" duration="845" data-original-title="" class="miliseconds">845ms</time>
+          <span class="exit-status ng-binding" toggle="tooltip" ng-show="job.phases[phase].exitCode" data-original-title="exit code">-1</span>
+        </span>
+      </div>
+      <pre class="job-output" ng-hide="command.collapsed" raw-html="command.merged | ansi"><span class="white bg-black">npm</span> <span class="black bg-yellow">WARN</span> <span class="magenta">package.json</span> benchmark-tests@0.0.1 No README data
+</pre>
+    </div><div ng-repeat="command in job.phases[phase].commands" ng-class="{ comment: command.comment }" class="command plugin-node comment">
+      <div class="title" ng-click="command.collapsed = !command.collapsed">
+        <span class="prompt ng-binding">#</span> <span class="command-text ng-binding">saved node_modules to cache</span> <i class="icon-plus plus ng-hide" ng-show="command.collapsed"></i>
+        <span class="meta pull-right">
+          <span class="plugin ng-binding">node</span>
+          <time datetime="" since="" duration="" data-original-title=""></time>
+          <span class="exit-status ng-binding" toggle="tooltip" ng-show="job.phases[phase].exitCode" data-original-title="exit code">-1</span>
+        </span>
+      </div>
+      <pre class="job-output" ng-hide="command.collapsed" raw-html="command.merged | ansi"></pre>
+    </div><div ng-repeat="command in job.phases[phase].commands" ng-class="{ comment: command.comment }" class="command plugin-">
+      <div class="title" ng-click="command.collapsed = !command.collapsed">
+        <span class="prompt ng-binding">$</span> <span class="command-text ng-binding"></span> <i class="icon-plus plus ng-hide" ng-show="command.collapsed"></i>
+        <span class="meta pull-right">
+          <span class="plugin ng-binding"></span>
+          <time datetime="" since="" duration="" data-original-title=""></time>
+          <span class="exit-status ng-binding" toggle="tooltip" ng-show="job.phases[phase].exitCode" data-original-title="exit code">-1</span>
+        </span>
+      </div>
+      <pre class="job-output" ng-hide="command.collapsed" raw-html="command.merged | ansi">An unexpected error occurred while excecuting this job. Please report at https://github.com/Strider-CD/strider/issues
+
+Source does not exist: /Users/pedroteixeira/.strider/pgte/benchmark-tests/526e9183a3745d9d1d00003d/code/node_modules
+
+Error: Source does not exist: /Users/pedroteixeira/.strider/pgte/benchmark-tests/526e9183a3745d9d1d00003d/code/node_modules
+    at /Users/pedroteixeira/projects/appendto/strider/node_modules/strider-simple-runner/lib/cachier.js:36:30
+    at Object.cb [as oncomplete] (fs.js:168:19)</pre>
+    </div>
+  </div>
+</div><div ng-repeat="phase in phases" class="phase phase phase-test ng-hide" ng-class="{ collapsed: job.phases[phase].collapsed }" ng-show="job.phases[phase].commands.length">
+  <div class="title" ng-click="job.phases[phase].collapsed = !job.phases[phase].collapsed">
+    <i class="arrow icon-caret-down"></i>
+    <span class="name ng-binding">test</span>
+    <span class="pull-right meta">
+      <time class="duration" datetime="" since="" duration="" data-original-title=""></time>
+      <span class="exit-status ng-binding" ng-show="job.phases[phase].exitCode">-1</span>
+    </span>
+  </div>
+  <div class="commands" ng-hide="job.phases[phase].collapsed">
+    <!-- ngRepeat: command in job.phases[phase].commands -->
+  </div>
+</div><div ng-repeat="phase in phases" class="phase phase phase-deploy ng-hide" ng-class="{ collapsed: job.phases[phase].collapsed }" ng-show="job.phases[phase].commands.length">
+  <div class="title" ng-click="job.phases[phase].collapsed = !job.phases[phase].collapsed">
+    <i class="arrow icon-caret-down"></i>
+    <span class="name ng-binding">deploy</span>
+    <span class="pull-right meta">
+      <time class="duration" datetime="" since="" duration="" data-original-title=""></time>
+      <span class="exit-status ng-binding" ng-show="job.phases[phase].exitCode">-1</span>
+    </span>
+  </div>
+  <div class="commands" ng-hide="job.phases[phase].collapsed">
+    <!-- ngRepeat: command in job.phases[phase].commands -->
+  </div>
+</div><div ng-repeat="phase in phases" class="phase phase phase-cleanup ng-hide" ng-class="{ collapsed: job.phases[phase].collapsed }" ng-show="job.phases[phase].commands.length">
+  <div class="title" ng-click="job.phases[phase].collapsed = !job.phases[phase].collapsed">
+    <i class="arrow icon-caret-down"></i>
+    <span class="name ng-binding">cleanup</span>
+    <span class="pull-right meta">
+      <time class="duration" datetime="" since="" duration="" data-original-title=""></time>
+      <span class="exit-status ng-binding" ng-show="job.phases[phase].exitCode">-1</span>
+    </span>
+  </div>
+  <div class="commands" ng-hide="job.phases[phase].collapsed">
+    <!-- ngRepeat: command in job.phases[phase].commands -->
+  </div>
+</div>
+              <div class="build-error" ng-show="job.status === 'errored' &amp;&amp; job.error">
+                <div class="alert alert-error ng-binding">Source does not exist: /Users/pedroteixeira/.strider/pgte/benchmark-tests/526e9183a3745d9d1d00003d/code/node_modules</div>
+                <pre class="ng-binding">Error: Source does not exist: /Users/pedroteixeira/.strider/pgte/benchmark-tests/526e9183a3745d9d1d00003d/code/node_modules
+    at /Users/pedroteixeira/projects/appendto/strider/node_modules/strider-simple-runner/lib/cachier.js:36:30
+    at Object.cb [as oncomplete] (fs.js:168:19)</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="span4 job-detail-sidebar pull-right">
+            <div class="build-list-header">
+  <h3>Past Builds</h3>
+</div>
+<div id="list-of-builds">
+  <table class="table">
+    <thead></thead>
+    <tbody>
+      <!-- | orderBy:sortDate:true" -->
+      <!-- ngRepeat: job in jobs --><tr ng-repeat="job in jobs" class="row-fluid build-list-item errored active" data-id="526e9183a3745d9d1d00003d" ng-click="selectJob(job._id)" ng-class="{active:job._id === $parent.job._id}">
+
+
+<td class="job-link">
+
+  <a href="/pgte/benchmark-tests/job/526e9183a3745d9d1d00003d">
+
+  <i ng-hide="job.nojobs" data-toggle="tooltip" class="icon-minus-sign error-text" data-original-title="errored"></i>
+  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
+  <span class="ng-binding">526e9183</span>
+  </a>
+</td>
+
+<td class="committer">
+  <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
+    <!-- ngSwitchWhen: false --><img ng-switch-when="false" ng-src="" class="ng-scope">
+    <!-- ngSwitchDefault:  -->
+  </div>
+</td>
+<td class="commit-url" ng-switch="!!job.trigger.url">
+  <!-- ngSwitchWhen: true -->
+  <!-- ngSwitchDefault:  --><span class="small-text ng-scope ng-binding" ng-switch-default="">
+    <i class="trigger-icon icon-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
+    Manually Redeploying
+  </span>
+</td>
+
+<td class="run-time" ng-switch="job.status">
+  <!-- ngSwitchWhen: running -->
+  <!-- ngSwitchWhen: submitted -->
+  <!-- ngSwitchDefault:  --><time ng-switch-default="" class="duration ng-scope seconds" duration="3296" ng-hide="job.nojobs">3.2s</time>
+</td>
+<td class="finished-at" ng-switch="job.status === 'running'">
+  <!-- ngSwitchWhen: false --><span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
+    <time data-toggle="tooltip" data-placement="top" datetime="2013-10-28T16:32:07.765Z" class="timeago" data-original-title="" title="10/28/2013 4:32:07 PM">11 minutes ago</time>
+  </span>
+  <!-- ngSwitchWhen: true -->
+</td>
+      </tr><tr ng-repeat="job in jobs" class="row-fluid build-list-item errored" data-id="526e8faea3745d9d1d000037" ng-click="selectJob(job._id)" ng-class="{active:job._id === $parent.job._id}">
+
+
+<td class="job-link">
+
+  <a href="/pgte/benchmark-tests/job/526e8faea3745d9d1d000037">
+
+  <i ng-hide="job.nojobs" data-toggle="tooltip" class="icon-minus-sign error-text" data-original-title="errored"></i>
+  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
+  <span class="ng-binding">526e8fae</span>
+  </a>
+</td>
+
+<td class="committer">
+  <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
+    <!-- ngSwitchWhen: false --><img ng-switch-when="false" ng-src="" class="ng-scope">
+    <!-- ngSwitchDefault:  -->
+  </div>
+</td>
+<td class="commit-url" ng-switch="!!job.trigger.url">
+  <!-- ngSwitchWhen: true -->
+  <!-- ngSwitchDefault:  --><span class="small-text ng-scope ng-binding" ng-switch-default="">
+    <i class="trigger-icon icon-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
+    Manually Redeploying
+  </span>
+</td>
+
+<td class="run-time" ng-switch="job.status">
+  <!-- ngSwitchWhen: running -->
+  <!-- ngSwitchWhen: submitted -->
+  <!-- ngSwitchDefault:  --><time ng-switch-default="" class="duration ng-scope seconds" duration="3384" ng-hide="job.nojobs">3.3s</time>
+</td>
+<td class="finished-at" ng-switch="job.status === 'running'">
+  <!-- ngSwitchWhen: false --><span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
+    <time data-toggle="tooltip" data-placement="top" datetime="2013-10-28T16:24:18.496Z" class="timeago" data-original-title="" title="10/28/2013 4:24:18 PM">19 minutes ago</time>
+  </span>
+  <!-- ngSwitchWhen: true -->
+</td>
+      </tr><tr ng-repeat="job in jobs" class="row-fluid build-list-item errored" data-id="526e8f78a3745d9d1d000031" ng-click="selectJob(job._id)" ng-class="{active:job._id === $parent.job._id}">
+
+
+<td class="job-link">
+
+  <a href="/pgte/benchmark-tests/job/526e8f78a3745d9d1d000031">
+
+  <i ng-hide="job.nojobs" data-toggle="tooltip" class="icon-minus-sign error-text" data-original-title="errored"></i>
+  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
+  <span class="ng-binding">526e8f78</span>
+  </a>
+</td>
+
+<td class="committer">
+  <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
+    <!-- ngSwitchWhen: false --><img ng-switch-when="false" ng-src="" class="ng-scope">
+    <!-- ngSwitchDefault:  -->
+  </div>
+</td>
+<td class="commit-url" ng-switch="!!job.trigger.url">
+  <!-- ngSwitchWhen: true -->
+  <!-- ngSwitchDefault:  --><span class="small-text ng-scope ng-binding" ng-switch-default="">
+    <i class="trigger-icon icon-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
+    Manually Redeploying
+  </span>
+</td>
+
+<td class="run-time" ng-switch="job.status">
+  <!-- ngSwitchWhen: running -->
+  <!-- ngSwitchWhen: submitted -->
+  <!-- ngSwitchDefault:  --><time ng-switch-default="" class="duration ng-scope seconds" duration="3368" ng-hide="job.nojobs">3.3s</time>
+</td>
+<td class="finished-at" ng-switch="job.status === 'running'">
+  <!-- ngSwitchWhen: false --><span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
+    <time data-toggle="tooltip" data-placement="top" datetime="2013-10-28T16:23:24.498Z" class="timeago" data-original-title="" title="10/28/2013 4:23:24 PM">19 minutes ago</time>
+  </span>
+  <!-- ngSwitchWhen: true -->
+</td>
+      </tr><tr ng-repeat="job in jobs" class="row-fluid build-list-item errored" data-id="526e8f55a3745d9d1d00002b" ng-click="selectJob(job._id)" ng-class="{active:job._id === $parent.job._id}">
+
+
+<td class="job-link">
+
+  <a href="/pgte/benchmark-tests/job/526e8f55a3745d9d1d00002b">
+
+  <i ng-hide="job.nojobs" data-toggle="tooltip" class="icon-minus-sign error-text" data-original-title="errored"></i>
+  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
+  <span class="ng-binding">526e8f55</span>
+  </a>
+</td>
+
+<td class="committer">
+  <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
+    <!-- ngSwitchWhen: false --><img ng-switch-when="false" ng-src="" class="ng-scope">
+    <!-- ngSwitchDefault:  -->
+  </div>
+</td>
+<td class="commit-url" ng-switch="!!job.trigger.url">
+  <!-- ngSwitchWhen: true -->
+  <!-- ngSwitchDefault:  --><span class="small-text ng-scope ng-binding" ng-switch-default="">
+    <i class="trigger-icon icon-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
+    Manually Redeploying
+  </span>
+</td>
+
+<td class="run-time" ng-switch="job.status">
+  <!-- ngSwitchWhen: running -->
+  <!-- ngSwitchWhen: submitted -->
+  <!-- ngSwitchDefault:  --><time ng-switch-default="" class="duration ng-scope seconds" duration="3388" ng-hide="job.nojobs">3.3s</time>
+</td>
+<td class="finished-at" ng-switch="job.status === 'running'">
+  <!-- ngSwitchWhen: false --><span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
+    <time data-toggle="tooltip" data-placement="top" datetime="2013-10-28T16:22:49.574Z" class="timeago" data-original-title="" title="10/28/2013 4:22:49 PM">20 minutes ago</time>
+  </span>
+  <!-- ngSwitchWhen: true -->
+</td>
+      </tr><tr ng-repeat="job in jobs" class="row-fluid build-list-item errored" data-id="526e8f3ba3745d9d1d000025" ng-click="selectJob(job._id)" ng-class="{active:job._id === $parent.job._id}">
+
+
+<td class="job-link">
+
+  <a href="/pgte/benchmark-tests/job/526e8f3ba3745d9d1d000025">
+
+  <i ng-hide="job.nojobs" data-toggle="tooltip" class="icon-minus-sign error-text" data-original-title="errored"></i>
+  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
+  <span class="ng-binding">526e8f3b</span>
+  </a>
+</td>
+
+<td class="committer">
+  <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
+    <!-- ngSwitchWhen: false --><img ng-switch-when="false" ng-src="" class="ng-scope">
+    <!-- ngSwitchDefault:  -->
+  </div>
+</td>
+<td class="commit-url" ng-switch="!!job.trigger.url">
+  <!-- ngSwitchWhen: true -->
+  <!-- ngSwitchDefault:  --><span class="small-text ng-scope ng-binding" ng-switch-default="">
+    <i class="trigger-icon icon-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
+    Manually Redeploying
+  </span>
+</td>
+
+<td class="run-time" ng-switch="job.status">
+  <!-- ngSwitchWhen: running -->
+  <!-- ngSwitchWhen: submitted -->
+  <!-- ngSwitchDefault:  --><time ng-switch-default="" class="duration ng-scope seconds" duration="3228" ng-hide="job.nojobs">3.2s</time>
+</td>
+<td class="finished-at" ng-switch="job.status === 'running'">
+  <!-- ngSwitchWhen: false --><span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
+    <time data-toggle="tooltip" data-placement="top" datetime="2013-10-28T16:22:22.920Z" class="timeago" data-original-title="" title="10/28/2013 4:22:22 PM">20 minutes ago</time>
+  </span>
+  <!-- ngSwitchWhen: true -->
+</td>
+      </tr><tr ng-repeat="job in jobs" class="row-fluid build-list-item errored" data-id="526e8e74a3745d9d1d00001f" ng-click="selectJob(job._id)" ng-class="{active:job._id === $parent.job._id}">
+
+
+<td class="job-link">
+
+  <a href="/pgte/benchmark-tests/job/526e8e74a3745d9d1d00001f">
+
+  <i ng-hide="job.nojobs" data-toggle="tooltip" class="icon-minus-sign error-text" data-original-title="errored"></i>
+  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
+  <span class="ng-binding">526e8e74</span>
+  </a>
+</td>
+
+<td class="committer">
+  <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
+    <!-- ngSwitchWhen: false --><img ng-switch-when="false" ng-src="" class="ng-scope">
+    <!-- ngSwitchDefault:  -->
+  </div>
+</td>
+<td class="commit-url" ng-switch="!!job.trigger.url">
+  <!-- ngSwitchWhen: true -->
+  <!-- ngSwitchDefault:  --><span class="small-text ng-scope ng-binding" ng-switch-default="">
+    <i class="trigger-icon icon-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
+    Manually Redeploying
+  </span>
+</td>
+
+<td class="run-time" ng-switch="job.status">
+  <!-- ngSwitchWhen: running -->
+  <!-- ngSwitchWhen: submitted -->
+  <!-- ngSwitchDefault:  --><time ng-switch-default="" class="duration ng-scope seconds" duration="3228" ng-hide="job.nojobs">3.2s</time>
+</td>
+<td class="finished-at" ng-switch="job.status === 'running'">
+  <!-- ngSwitchWhen: false --><span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
+    <time data-toggle="tooltip" data-placement="top" datetime="2013-10-28T16:19:05.127Z" class="timeago" data-original-title="" title="10/28/2013 4:19:05 PM">24 minutes ago</time>
+  </span>
+  <!-- ngSwitchWhen: true -->
+</td>
+      </tr><tr ng-repeat="job in jobs" class="row-fluid build-list-item errored" data-id="526e8e3aa3745d9d1d000019" ng-click="selectJob(job._id)" ng-class="{active:job._id === $parent.job._id}">
+
+
+<td class="job-link">
+
+  <a href="/pgte/benchmark-tests/job/526e8e3aa3745d9d1d000019">
+
+  <i ng-hide="job.nojobs" data-toggle="tooltip" class="icon-minus-sign error-text" data-original-title="errored"></i>
+  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
+  <span class="ng-binding">526e8e3a</span>
+  </a>
+</td>
+
+<td class="committer">
+  <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
+    <!-- ngSwitchWhen: false --><img ng-switch-when="false" ng-src="" class="ng-scope">
+    <!-- ngSwitchDefault:  -->
+  </div>
+</td>
+<td class="commit-url" ng-switch="!!job.trigger.url">
+  <!-- ngSwitchWhen: true -->
+  <!-- ngSwitchDefault:  --><span class="small-text ng-scope ng-binding" ng-switch-default="">
+    <i class="trigger-icon icon-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
+    Manually Redeploying
+  </span>
+</td>
+
+<td class="run-time" ng-switch="job.status">
+  <!-- ngSwitchWhen: running -->
+  <!-- ngSwitchWhen: submitted -->
+  <!-- ngSwitchDefault:  --><time ng-switch-default="" class="duration ng-scope seconds" duration="2925" ng-hide="job.nojobs">2.9s</time>
+</td>
+<td class="finished-at" ng-switch="job.status === 'running'">
+  <!-- ngSwitchWhen: false --><span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
+    <time data-toggle="tooltip" data-placement="top" datetime="2013-10-28T16:18:06.683Z" class="timeago" data-original-title="" title="10/28/2013 4:18:06 PM">25 minutes ago</time>
+  </span>
+  <!-- ngSwitchWhen: true -->
+</td>
+      </tr><tr ng-repeat="job in jobs" class="row-fluid build-list-item errored" data-id="526e88fda3745d9d1d000013" ng-click="selectJob(job._id)" ng-class="{active:job._id === $parent.job._id}">
+
+
+<td class="job-link">
+
+  <a href="/pgte/benchmark-tests/job/526e88fda3745d9d1d000013">
+
+  <i ng-hide="job.nojobs" data-toggle="tooltip" class="icon-minus-sign error-text" data-original-title="errored"></i>
+  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
+  <span class="ng-binding">526e88fd</span>
+  </a>
+</td>
+
+<td class="committer">
+  <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
+    <!-- ngSwitchWhen: false --><img ng-switch-when="false" ng-src="" class="ng-scope">
+    <!-- ngSwitchDefault:  -->
+  </div>
+</td>
+<td class="commit-url" ng-switch="!!job.trigger.url">
+  <!-- ngSwitchWhen: true -->
+  <!-- ngSwitchDefault:  --><span class="small-text ng-scope ng-binding" ng-switch-default="">
+    <i class="trigger-icon icon-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
+    Manually Redeploying
+  </span>
+</td>
+
+<td class="run-time" ng-switch="job.status">
+  <!-- ngSwitchWhen: running -->
+  <!-- ngSwitchWhen: submitted -->
+  <!-- ngSwitchDefault:  --><time ng-switch-default="" class="duration ng-scope seconds" duration="2938" ng-hide="job.nojobs">2.9s</time>
+</td>
+<td class="finished-at" ng-switch="job.status === 'running'">
+  <!-- ngSwitchWhen: false --><span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
+    <time data-toggle="tooltip" data-placement="top" datetime="2013-10-28T15:55:44.663Z" class="timeago" data-original-title="" title="10/28/2013 3:55:44 PM">an hour ago</time>
+  </span>
+  <!-- ngSwitchWhen: true -->
+</td>
+      </tr><tr ng-repeat="job in jobs" class="row-fluid build-list-item errored" data-id="526e88a3a3745d9d1d00000d" ng-click="selectJob(job._id)" ng-class="{active:job._id === $parent.job._id}">
+
+
+<td class="job-link">
+
+  <a href="/pgte/benchmark-tests/job/526e88a3a3745d9d1d00000d">
+
+  <i ng-hide="job.nojobs" data-toggle="tooltip" class="icon-minus-sign error-text" data-original-title="errored"></i>
+  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
+  <span class="ng-binding">526e88a3</span>
+  </a>
+</td>
+
+<td class="committer">
+  <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
+    <!-- ngSwitchWhen: false --><img ng-switch-when="false" ng-src="" class="ng-scope">
+    <!-- ngSwitchDefault:  -->
+  </div>
+</td>
+<td class="commit-url" ng-switch="!!job.trigger.url">
+  <!-- ngSwitchWhen: true -->
+  <!-- ngSwitchDefault:  --><span class="small-text ng-scope ng-binding" ng-switch-default="">
+    <i class="trigger-icon icon-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
+    Manually Redeploying
+  </span>
+</td>
+
+<td class="run-time" ng-switch="job.status">
+  <!-- ngSwitchWhen: running -->
+  <!-- ngSwitchWhen: submitted -->
+  <!-- ngSwitchDefault:  --><time ng-switch-default="" class="duration ng-scope seconds" duration="3481" ng-hide="job.nojobs">3.4s</time>
+</td>
+<td class="finished-at" ng-switch="job.status === 'running'">
+  <!-- ngSwitchWhen: false --><span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
+    <time data-toggle="tooltip" data-placement="top" datetime="2013-10-28T15:54:15.729Z" class="timeago" data-original-title="" title="10/28/2013 3:54:15 PM">an hour ago</time>
+  </span>
+  <!-- ngSwitchWhen: true -->
+</td>
+      </tr><tr ng-repeat="job in jobs" class="row-fluid build-list-item errored" data-id="526e7a8dd2a0d5771a00003d" ng-click="selectJob(job._id)" ng-class="{active:job._id === $parent.job._id}">
+
+
+<td class="job-link">
+
+  <a href="/pgte/benchmark-tests/job/526e7a8dd2a0d5771a00003d">
+
+  <i ng-hide="job.nojobs" data-toggle="tooltip" class="icon-minus-sign error-text" data-original-title="errored"></i>
+  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
+  <span class="ng-binding">526e7a8d</span>
+  </a>
+</td>
+
+<td class="committer">
+  <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
+    <!-- ngSwitchWhen: false --><img ng-switch-when="false" ng-src="" class="ng-scope">
+    <!-- ngSwitchDefault:  -->
+  </div>
+</td>
+<td class="commit-url" ng-switch="!!job.trigger.url">
+  <!-- ngSwitchWhen: true -->
+  <!-- ngSwitchDefault:  --><span class="small-text ng-scope ng-binding" ng-switch-default="">
+    <i class="trigger-icon icon-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
+    Manually Redeploying
+  </span>
+</td>
+
+<td class="run-time" ng-switch="job.status">
+  <!-- ngSwitchWhen: running -->
+  <!-- ngSwitchWhen: submitted -->
+  <!-- ngSwitchDefault:  --><time ng-switch-default="" class="duration ng-scope seconds" duration="3112" ng-hide="job.nojobs">3.1s</time>
+</td>
+<td class="finished-at" ng-switch="job.status === 'running'">
+  <!-- ngSwitchWhen: false --><span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
+    <time data-toggle="tooltip" data-placement="top" datetime="2013-10-28T14:54:09.387Z" class="timeago" data-original-title="" title="10/28/2013 2:54:09 PM">2 hours ago</time>
+  </span>
+  <!-- ngSwitchWhen: true -->
+</td>
+      </tr><tr ng-repeat="job in jobs" class="row-fluid build-list-item errored" data-id="526e7a6bd2a0d5771a000037" ng-click="selectJob(job._id)" ng-class="{active:job._id === $parent.job._id}">
+
+
+<td class="job-link">
+
+  <a href="/pgte/benchmark-tests/job/526e7a6bd2a0d5771a000037">
+
+  <i ng-hide="job.nojobs" data-toggle="tooltip" class="icon-minus-sign error-text" data-original-title="errored"></i>
+  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
+  <span class="ng-binding">526e7a6b</span>
+  </a>
+</td>
+
+<td class="committer">
+  <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
+    <!-- ngSwitchWhen: false --><img ng-switch-when="false" ng-src="" class="ng-scope">
+    <!-- ngSwitchDefault:  -->
+  </div>
+</td>
+<td class="commit-url" ng-switch="!!job.trigger.url">
+  <!-- ngSwitchWhen: true -->
+  <!-- ngSwitchDefault:  --><span class="small-text ng-scope ng-binding" ng-switch-default="">
+    <i class="trigger-icon icon-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
+    Manually Redeploying
+  </span>
+</td>
+
+<td class="run-time" ng-switch="job.status">
+  <!-- ngSwitchWhen: running -->
+  <!-- ngSwitchWhen: submitted -->
+  <!-- ngSwitchDefault:  --><time ng-switch-default="" class="duration ng-scope seconds" duration="3008" ng-hide="job.nojobs">3s</time>
+</td>
+<td class="finished-at" ng-switch="job.status === 'running'">
+  <!-- ngSwitchWhen: false --><span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
+    <time data-toggle="tooltip" data-placement="top" datetime="2013-10-28T14:53:35.711Z" class="timeago" data-original-title="" title="10/28/2013 2:53:35 PM">2 hours ago</time>
+  </span>
+  <!-- ngSwitchWhen: true -->
+</td>
+      </tr><tr ng-repeat="job in jobs" class="row-fluid build-list-item errored" data-id="526e7a4ed2a0d5771a000031" ng-click="selectJob(job._id)" ng-class="{active:job._id === $parent.job._id}">
+
+
+<td class="job-link">
+
+  <a href="/pgte/benchmark-tests/job/526e7a4ed2a0d5771a000031">
+
+  <i ng-hide="job.nojobs" data-toggle="tooltip" class="icon-minus-sign error-text" data-original-title="errored"></i>
+  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
+  <span class="ng-binding">526e7a4e</span>
+  </a>
+</td>
+
+<td class="committer">
+  <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
+    <!-- ngSwitchWhen: false --><img ng-switch-when="false" ng-src="" class="ng-scope">
+    <!-- ngSwitchDefault:  -->
+  </div>
+</td>
+<td class="commit-url" ng-switch="!!job.trigger.url">
+  <!-- ngSwitchWhen: true -->
+  <!-- ngSwitchDefault:  --><span class="small-text ng-scope ng-binding" ng-switch-default="">
+    <i class="trigger-icon icon-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
+    Manually Redeploying
+  </span>
+</td>
+
+<td class="run-time" ng-switch="job.status">
+  <!-- ngSwitchWhen: running -->
+  <!-- ngSwitchWhen: submitted -->
+  <!-- ngSwitchDefault:  --><time ng-switch-default="" class="duration ng-scope seconds" duration="3837" ng-hide="job.nojobs">3.8s</time>
+</td>
+<td class="finished-at" ng-switch="job.status === 'running'">
+  <!-- ngSwitchWhen: false --><span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
+    <time data-toggle="tooltip" data-placement="top" datetime="2013-10-28T14:53:07.836Z" class="timeago" data-original-title="" title="10/28/2013 2:53:07 PM">2 hours ago</time>
+  </span>
+  <!-- ngSwitchWhen: true -->
+</td>
+      </tr><tr ng-repeat="job in jobs" class="row-fluid build-list-item errored" data-id="526e7a22d2a0d5771a00002b" ng-click="selectJob(job._id)" ng-class="{active:job._id === $parent.job._id}">
+
+
+<td class="job-link">
+
+  <a href="/pgte/benchmark-tests/job/526e7a22d2a0d5771a00002b">
+
+  <i ng-hide="job.nojobs" data-toggle="tooltip" class="icon-minus-sign error-text" data-original-title="errored"></i>
+  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
+  <span class="ng-binding">526e7a22</span>
+  </a>
+</td>
+
+<td class="committer">
+  <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
+    <!-- ngSwitchWhen: false --><img ng-switch-when="false" ng-src="" class="ng-scope">
+    <!-- ngSwitchDefault:  -->
+  </div>
+</td>
+<td class="commit-url" ng-switch="!!job.trigger.url">
+  <!-- ngSwitchWhen: true -->
+  <!-- ngSwitchDefault:  --><span class="small-text ng-scope ng-binding" ng-switch-default="">
+    <i class="trigger-icon icon-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
+    Manually Redeploying
+  </span>
+</td>
+
+<td class="run-time" ng-switch="job.status">
+  <!-- ngSwitchWhen: running -->
+  <!-- ngSwitchWhen: submitted -->
+  <!-- ngSwitchDefault:  --><time ng-switch-default="" class="duration ng-scope seconds" duration="3003" ng-hide="job.nojobs">3s</time>
+</td>
+<td class="finished-at" ng-switch="job.status === 'running'">
+  <!-- ngSwitchWhen: false --><span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
+    <time data-toggle="tooltip" data-placement="top" datetime="2013-10-28T14:52:23.370Z" class="timeago" data-original-title="" title="10/28/2013 2:52:23 PM">2 hours ago</time>
+  </span>
+  <!-- ngSwitchWhen: true -->
+</td>
+      </tr><tr ng-repeat="job in jobs" class="row-fluid build-list-item errored" data-id="526e7a05d2a0d5771a000025" ng-click="selectJob(job._id)" ng-class="{active:job._id === $parent.job._id}">
+
+
+<td class="job-link">
+
+  <a href="/pgte/benchmark-tests/job/526e7a05d2a0d5771a000025">
+
+  <i ng-hide="job.nojobs" data-toggle="tooltip" class="icon-minus-sign error-text" data-original-title="errored"></i>
+  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
+  <span class="ng-binding">526e7a05</span>
+  </a>
+</td>
+
+<td class="committer">
+  <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
+    <!-- ngSwitchWhen: false --><img ng-switch-when="false" ng-src="" class="ng-scope">
+    <!-- ngSwitchDefault:  -->
+  </div>
+</td>
+<td class="commit-url" ng-switch="!!job.trigger.url">
+  <!-- ngSwitchWhen: true -->
+  <!-- ngSwitchDefault:  --><span class="small-text ng-scope ng-binding" ng-switch-default="">
+    <i class="trigger-icon icon-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
+    Manually Redeploying
+  </span>
+</td>
+
+<td class="run-time" ng-switch="job.status">
+  <!-- ngSwitchWhen: running -->
+  <!-- ngSwitchWhen: submitted -->
+  <!-- ngSwitchDefault:  --><time ng-switch-default="" class="duration ng-scope seconds" duration="3425" ng-hide="job.nojobs">3.4s</time>
+</td>
+<td class="finished-at" ng-switch="job.status === 'running'">
+  <!-- ngSwitchWhen: false --><span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
+    <time data-toggle="tooltip" data-placement="top" datetime="2013-10-28T14:51:53.971Z" class="timeago" data-original-title="" title="10/28/2013 2:51:53 PM">2 hours ago</time>
+  </span>
+  <!-- ngSwitchWhen: true -->
+</td>
+      </tr><tr ng-repeat="job in jobs" class="row-fluid build-list-item errored" data-id="526e79dcd2a0d5771a00001f" ng-click="selectJob(job._id)" ng-class="{active:job._id === $parent.job._id}">
+
+
+<td class="job-link">
+
+  <a href="/pgte/benchmark-tests/job/526e79dcd2a0d5771a00001f">
+
+  <i ng-hide="job.nojobs" data-toggle="tooltip" class="icon-minus-sign error-text" data-original-title="errored"></i>
+  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
+  <span class="ng-binding">526e79dc</span>
+  </a>
+</td>
+
+<td class="committer">
+  <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
+    <!-- ngSwitchWhen: false --><img ng-switch-when="false" ng-src="" class="ng-scope">
+    <!-- ngSwitchDefault:  -->
+  </div>
+</td>
+<td class="commit-url" ng-switch="!!job.trigger.url">
+  <!-- ngSwitchWhen: true -->
+  <!-- ngSwitchDefault:  --><span class="small-text ng-scope ng-binding" ng-switch-default="">
+    <i class="trigger-icon icon-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
+    Manually Redeploying
+  </span>
+</td>
+
+<td class="run-time" ng-switch="job.status">
+  <!-- ngSwitchWhen: running -->
+  <!-- ngSwitchWhen: submitted -->
+  <!-- ngSwitchDefault:  --><time ng-switch-default="" class="duration ng-scope seconds" duration="2919" ng-hide="job.nojobs">2.9s</time>
+</td>
+<td class="finished-at" ng-switch="job.status === 'running'">
+  <!-- ngSwitchWhen: false --><span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
+    <time data-toggle="tooltip" data-placement="top" datetime="2013-10-28T14:51:11.610Z" class="timeago" data-original-title="" title="10/28/2013 2:51:11 PM">2 hours ago</time>
+  </span>
+  <!-- ngSwitchWhen: true -->
+</td>
+      </tr><tr ng-repeat="job in jobs" class="row-fluid build-list-item errored" data-id="526e7991d2a0d5771a000019" ng-click="selectJob(job._id)" ng-class="{active:job._id === $parent.job._id}">
+
+
+<td class="job-link">
+
+  <a href="/pgte/benchmark-tests/job/526e7991d2a0d5771a000019">
+
+  <i ng-hide="job.nojobs" data-toggle="tooltip" class="icon-minus-sign error-text" data-original-title="errored"></i>
+  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
+  <span class="ng-binding">526e7991</span>
+  </a>
+</td>
+
+<td class="committer">
+  <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
+    <!-- ngSwitchWhen: false --><img ng-switch-when="false" ng-src="" class="ng-scope">
+    <!-- ngSwitchDefault:  -->
+  </div>
+</td>
+<td class="commit-url" ng-switch="!!job.trigger.url">
+  <!-- ngSwitchWhen: true -->
+  <!-- ngSwitchDefault:  --><span class="small-text ng-scope ng-binding" ng-switch-default="">
+    <i class="trigger-icon icon-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
+    Manually Redeploying
+  </span>
+</td>
+
+<td class="run-time" ng-switch="job.status">
+  <!-- ngSwitchWhen: running -->
+  <!-- ngSwitchWhen: submitted -->
+  <!-- ngSwitchDefault:  --><time ng-switch-default="" class="duration ng-scope seconds" duration="2919" ng-hide="job.nojobs">2.9s</time>
+</td>
+<td class="finished-at" ng-switch="job.status === 'running'">
+  <!-- ngSwitchWhen: false --><span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
+    <time data-toggle="tooltip" data-placement="top" datetime="2013-10-28T14:49:57.860Z" class="timeago" data-original-title="" title="10/28/2013 2:49:57 PM">2 hours ago</time>
+  </span>
+  <!-- ngSwitchWhen: true -->
+</td>
+      </tr><tr ng-repeat="job in jobs" class="row-fluid build-list-item errored" data-id="526e7966d2a0d5771a000013" ng-click="selectJob(job._id)" ng-class="{active:job._id === $parent.job._id}">
+
+
+<td class="job-link">
+
+  <a href="/pgte/benchmark-tests/job/526e7966d2a0d5771a000013">
+
+  <i ng-hide="job.nojobs" data-toggle="tooltip" class="icon-minus-sign error-text" data-original-title="errored"></i>
+  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
+  <span class="ng-binding">526e7966</span>
+  </a>
+</td>
+
+<td class="committer">
+  <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
+    <!-- ngSwitchWhen: false --><img ng-switch-when="false" ng-src="" class="ng-scope">
+    <!-- ngSwitchDefault:  -->
+  </div>
+</td>
+<td class="commit-url" ng-switch="!!job.trigger.url">
+  <!-- ngSwitchWhen: true -->
+  <!-- ngSwitchDefault:  --><span class="small-text ng-scope ng-binding" ng-switch-default="">
+    <i class="trigger-icon icon-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
+    Manually Redeploying
+  </span>
+</td>
+
+<td class="run-time" ng-switch="job.status">
+  <!-- ngSwitchWhen: running -->
+  <!-- ngSwitchWhen: submitted -->
+  <!-- ngSwitchDefault:  --><time ng-switch-default="" class="duration ng-scope seconds" duration="2596" ng-hide="job.nojobs">2.5s</time>
+</td>
+<td class="finished-at" ng-switch="job.status === 'running'">
+  <!-- ngSwitchWhen: false --><span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
+    <time data-toggle="tooltip" data-placement="top" datetime="2013-10-28T14:49:13.970Z" class="timeago" data-original-title="" title="10/28/2013 2:49:13 PM">2 hours ago</time>
+  </span>
+  <!-- ngSwitchWhen: true -->
+</td>
+      </tr><tr ng-repeat="job in jobs" class="row-fluid build-list-item errored" data-id="526e78fbd2a0d5771a00000d" ng-click="selectJob(job._id)" ng-class="{active:job._id === $parent.job._id}">
+
+
+<td class="job-link">
+
+  <a href="/pgte/benchmark-tests/job/526e78fbd2a0d5771a00000d">
+
+  <i ng-hide="job.nojobs" data-toggle="tooltip" class="icon-minus-sign error-text" data-original-title="errored"></i>
+  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
+  <span class="ng-binding">526e78fb</span>
+  </a>
+</td>
+
+<td class="committer">
+  <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
+    <!-- ngSwitchWhen: false --><img ng-switch-when="false" ng-src="" class="ng-scope">
+    <!-- ngSwitchDefault:  -->
+  </div>
+</td>
+<td class="commit-url" ng-switch="!!job.trigger.url">
+  <!-- ngSwitchWhen: true -->
+  <!-- ngSwitchDefault:  --><span class="small-text ng-scope ng-binding" ng-switch-default="">
+    <i class="trigger-icon icon-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
+    Manually Redeploying
+  </span>
+</td>
+
+<td class="run-time" ng-switch="job.status">
+  <!-- ngSwitchWhen: running -->
+  <!-- ngSwitchWhen: submitted -->
+  <!-- ngSwitchDefault:  --><time ng-switch-default="" class="duration ng-scope seconds" duration="2966" ng-hide="job.nojobs">2.9s</time>
+</td>
+<td class="finished-at" ng-switch="job.status === 'running'">
+  <!-- ngSwitchWhen: false --><span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
+    <time data-toggle="tooltip" data-placement="top" datetime="2013-10-28T14:47:26.887Z" class="timeago" data-original-title="" title="10/28/2013 2:47:26 PM">2 hours ago</time>
+  </span>
+  <!-- ngSwitchWhen: true -->
+</td>
+      </tr><tr ng-repeat="job in jobs" class="row-fluid build-list-item errored" data-id="526e6283694744a713000085" ng-click="selectJob(job._id)" ng-class="{active:job._id === $parent.job._id}">
+
+
+<td class="job-link">
+
+  <a href="/pgte/benchmark-tests/job/526e6283694744a713000085">
+
+  <i ng-hide="job.nojobs" data-toggle="tooltip" class="icon-minus-sign error-text" data-original-title="errored"></i>
+  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
+  <span class="ng-binding">526e6283</span>
+  </a>
+</td>
+
+<td class="committer">
+  <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
+    <!-- ngSwitchWhen: false --><img ng-switch-when="false" ng-src="" class="ng-scope">
+    <!-- ngSwitchDefault:  -->
+  </div>
+</td>
+<td class="commit-url" ng-switch="!!job.trigger.url">
+  <!-- ngSwitchWhen: true -->
+  <!-- ngSwitchDefault:  --><span class="small-text ng-scope ng-binding" ng-switch-default="">
+    <i class="trigger-icon icon-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
+    Manually Redeploying
+  </span>
+</td>
+
+<td class="run-time" ng-switch="job.status">
+  <!-- ngSwitchWhen: running -->
+  <!-- ngSwitchWhen: submitted -->
+  <!-- ngSwitchDefault:  --><time ng-switch-default="" class="duration ng-scope seconds" duration="2497" ng-hide="job.nojobs">2.4s</time>
+</td>
+<td class="finished-at" ng-switch="job.status === 'running'">
+  <!-- ngSwitchWhen: false --><span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
+    <time data-toggle="tooltip" data-placement="top" datetime="2013-10-28T13:11:34.848Z" class="timeago" data-original-title="" title="10/28/2013 1:11:34 PM">4 hours ago</time>
+  </span>
+  <!-- ngSwitchWhen: true -->
+</td>
+      </tr><tr ng-repeat="job in jobs" class="row-fluid build-list-item errored" data-id="526e626f694744a71300007f" ng-click="selectJob(job._id)" ng-class="{active:job._id === $parent.job._id}">
+
+
+<td class="job-link">
+
+  <a href="/pgte/benchmark-tests/job/526e626f694744a71300007f">
+
+  <i ng-hide="job.nojobs" data-toggle="tooltip" class="icon-minus-sign error-text" data-original-title="errored"></i>
+  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
+  <span class="ng-binding">526e626f</span>
+  </a>
+</td>
+
+<td class="committer">
+  <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
+    <!-- ngSwitchWhen: false --><img ng-switch-when="false" ng-src="" class="ng-scope">
+    <!-- ngSwitchDefault:  -->
+  </div>
+</td>
+<td class="commit-url" ng-switch="!!job.trigger.url">
+  <!-- ngSwitchWhen: true -->
+  <!-- ngSwitchDefault:  --><span class="small-text ng-scope ng-binding" ng-switch-default="">
+    <i class="trigger-icon icon-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
+    Manually Redeploying
+  </span>
+</td>
+
+<td class="run-time" ng-switch="job.status">
+  <!-- ngSwitchWhen: running -->
+  <!-- ngSwitchWhen: submitted -->
+  <!-- ngSwitchDefault:  --><time ng-switch-default="" class="duration ng-scope seconds" duration="2963" ng-hide="job.nojobs">2.9s</time>
+</td>
+<td class="finished-at" ng-switch="job.status === 'running'">
+  <!-- ngSwitchWhen: false --><span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
+    <time data-toggle="tooltip" data-placement="top" datetime="2013-10-28T13:11:15.472Z" class="timeago" data-original-title="" title="10/28/2013 1:11:15 PM">4 hours ago</time>
+  </span>
+  <!-- ngSwitchWhen: true -->
+</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+          </div>
+        </div>
+    </div>

@@ -14,6 +14,11 @@
     <link rel="stylesheet" href="/linker/styles/custom.css">
     <!--STYLES END-->
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+    <style>
+      [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+        display: none !important;
+      }
+    </style>
 
   </head>
 
@@ -39,7 +44,7 @@
       </div>
     </div>
 
-    <div ng-controller="ErrorCtrl">
+    <div ng-controller="ErrorCtrl" ng-cloak>
       <div class="container error alert alert-block alert-danger fade in" ng-show="error.message">
       {{error.message}}
       </div><!-- /.container.error -->
@@ -51,19 +56,10 @@
 
     <!-- LES SCRIPTS -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <!--SCRIPTS-->
-    <script src="/linker/js/vendor/angular/angular.min.js"></script>
-    <script src="/linker/js/vendor/angular/angular-route.min.js"></script>
-    <script src="/linker/js/vendor/angular/angular-resource.min.js"></script>
-    <script src="/linker/js/vendor/socket.io.js"></script>
-    <script src="/linker/js/vendor/underscore.js"></script>
-    <script src="/linker/js/sails.io.js"></script>
-    <script src="/linker/js/job_store.js"></script>
-    <script src="/linker/js/strider.js"></script>
-    <script src="/linker/js/app.js"></script>
-    <script src="/linker/js/controllers/dashboard.js"></script>
-    <script src="/linker/js/controllers/error.js"></script>
-    <script src="/linker/js/controllers/login.js"></script>
-    <!--SCRIPTS END-->
+    <script src="/js/vendor/socket.io.js"></script>
+    <script src="/js/vendor/angular/angular.min.js"></script>
+    <script src="/js/vendor/angular/angular-route.min.js"></script>
+    <script src="/js/vendor/angular/angular-resource.min.js"></script>
+    <script src="/js/browserswarm.js"></script>
   </body>
 </html>

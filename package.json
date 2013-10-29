@@ -9,7 +9,8 @@
     "sails-disk": "~0.9.0",
     "ejs": "0.8.4",
     "optimist": "0.3.4",
-    "sails-mongo": "~0.9.5"
+    "sails-mongo": "~0.9.5",
+    "xtend": "~2.1.1"
   },
   "scripts": {
     "start": "node app.js",
@@ -18,5 +19,9 @@
   "main": "app.js",
   "repository": "",
   "author": "",
-  "license": ""
+  "license": "",
+  "devDependencies": {
+    "browserify": "~2.35.0",
+    "grunt-browserify": "~1.2.9"
+  }
 }
