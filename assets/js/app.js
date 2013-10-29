@@ -68,7 +68,7 @@ function configureApp($routeProvider, $locationProvider, $httpProvider) {
       controller: 'LoginCtrl'
     }).
     when('/:owner/:repo/job/:jobid', {
-      templateUel: '/partials/job.html',
+      templateUrl: '/partials/job.html',
       controller: 'JobCtrl'
     });
 }

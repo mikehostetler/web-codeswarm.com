@@ -1,29 +1,30 @@
-    <div class="row-fluid job-page-intro ng-scope">
-      <div class="span12 job-title">
+<h1>Job</h1>
+  <div class="row-fluid job-page-intro ng-scope">
+    <div class="span12 job-title">
 
-        <div class="pull-right btn btn-warning ng-binding" ng-click="clearCache()" ng-disabled="clearingCache">
-          Clear Cache
-        </div>
-        <h3>
-
-          <span ng-show="!job.running &amp;&amp; repo.access_level &gt; 0" ng-click="startDeploy(job)" title="Retest &amp; Deploy" class="clickable test-and-deploy-action ng-hide">
-            <i class="icon-cloud-upload"></i>
-          </span>
-          <span ng-hide="job.running || repo.access_level &lt; 1" ng-click="startTest(job)" title="Retest" class="clickable test-only-action">
-            <i class="icon-refresh"></i>
-          </span>
-          <a href="/pgte/benchmark-tests/config" ng-hide="repo.access_level &lt; 1" title="Configure">
-            <i class="icon-wrench"></i>
-          </a>
-
-          <span class="job-repo">pgte/benchmark-tests</span>
-          <a href="https://github.com/pgte/benchmark-tests" target="_blank">
-            <i class="icon-github"></i>
-          </a>
-        </h3>
-
+      <div class="pull-right btn btn-warning ng-binding" ng-click="clearCache()" ng-disabled="clearingCache">
+        Clear Cache
       </div>
-    </div>
+      <h3>
+
+      <span ng-show="!job.running &amp;&amp; repo.access_level > 0" ng-click="deploy(job)" title="Retest &amp; Deploy" class="clickable test-and-deploy-action ng-hide">
+        <i class="fa fa-cloud-upload"></i>
+      </span>
+      <span ng-hide="job.running || repo.access_level &lt; 1" ng-click="startTest(job)" title="Retest" class="clickable test-only-action">
+        <i class="icon-refresh"></i>
+      </span>
+      <a href="/pgte/benchmark-tests/config" ng-hide="repo.access_level &lt; 1" title="Configure">
+        <i class="icon-wrench"></i>
+      </a>
+
+      <span class="job-repo">pgte/benchmark-tests</span>
+      <a href="https://github.com/pgte/benchmark-tests" target="_blank">
+        <i class="icon-github"></i>
+      </a>
+    </h3>
+
+  </div>
+</div>
     <div class="job-main ng-scope">
         <div class="row-fluid job-wrap">
 

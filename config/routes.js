@@ -177,7 +177,8 @@ var angularView = {
 [
   '/',
   '/login',
-  '/dashboard'
+  '/dashboard',
+  '/:owner/:repo/job/:jobid'
 ].
   forEach(function(path) {
     exports.routes[path] = angularView;

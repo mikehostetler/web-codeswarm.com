@@ -19,11 +19,12 @@ function Strider($resource, opts) {
   this.url = opts.url || '//localhost:3000';
 
   /// Restful API setup
-  var apiBase = this.url + '/api';
+  var apiBase  = this.url + '/api';
   var loginURL = this.url + '/login';
-  this.Jobs =    $resource(apiBase + '/jobs');
+  this.Jobs    = $resource(apiBase + '/jobs');
   this.Session = $resource(apiBase + '/session');
-  this.jobs = jobStore.jobs;
+
+  this.jobs    = jobStore.jobs;
 }
 
 
@@ -68,4 +69,11 @@ S.connect = function(scope) {
 
 S.deploy = function deploy(project) {
   this.socket.emit('deploy', project.name);
+};
+
+
+/// job
+
+S.job = function job(jobId, cb) {
+  jobStore.load(jobId, cb);
 };

@@ -56,7 +56,6 @@ var statusHandlers = {
   },
 
   'phase.done': function (data) {
-    console.log('phase done', this);
     if (! this.phases) return;
     this.phases[data.phase].finished = data.time;
     this.phases[data.phase].duration = data.elapsed
@@ -120,7 +119,8 @@ function JobStore() {
   this.jobs = {
     dashboard: dashboard.bind(this),
     public: [],
-    yours: []
+    yours: [],
+    limbo: []
   };
 }
 var JS = JobStore.prototype;
@@ -128,7 +128,6 @@ var JS = JobStore.prototype;
 function dashboard(cb) {
   var self = this;
   this.socket.emit('dashboard:jobs', function(jobs) {
-    console.log('jobs:', jobs);
     self.jobs.yours = jobs.yours;
     self.jobs.public = jobs.public;
     self.changed();
@@ -154,7 +153,7 @@ JS.connect = function connect(socket, changeCallback) {
 
 /// update - handle update event
 
-JS.update = function udpate(event, args, access, dontchange) {
+JS.update = function update(event, args, access, dontchange) {
   var id = args.shift()
     , job = this.job(id, access)
     , handler = statusHandlers[event];
@@ -172,9 +171,8 @@ JS.update = function udpate(event, args, access, dontchange) {
 /// newJob - when server notifies of new job
 
 JS.newJob = function newJob(job, access) {
-  console.log('newJob', this);
   if (! job) return;
-  job = job[0];
+  if (Array.isArray(job)) job = job[0];
 
   var jobs = this.jobs[access]
     , found = -1
@@ -182,12 +180,27 @@ JS.newJob = function newJob(job, access) {
 
   if (! jobs) return;
 
-  for (var i=0; i<jobs.length; i++) {
-    if (jobs[i].project.name === job.project.name) {
-      found = i;
-      break;
+  function search() {
+    for (var i=0; i<jobs.length; i++) {
+      if (jobs[i].project.name === job.project.name) {
+        found = i;
+        break;
+      }
     }
   }
+
+  search();
+  if (found < 0) {
+    /// try limbo
+    jobs = this.jobs.limbo;
+    search();
+    if (found) {
+      jobs = this.jobs[access];
+      jobs.unshift(this.jobs.limbo[found]);
+      this.jobs.limbo.splice(found, 1);
+    }
+  }
+
   if (found !== -1) {
     old = jobs.splice(found, 1)[0];
     job.project.prev = old.project.prev;
@@ -207,16 +220,40 @@ JS.newJob = function newJob(job, access) {
 
 JS.job = function job(id, access) {
   var jobs = this.jobs[access];
+  var job = search(id, jobs);
+  // if not found, try limbo
+  if (! job){
+    job = search(id, this.jobs.limbo);
+    if (job) {
+      jobs.unshift(job);
+      this.jobs.limbo.splice(this.jobs.limbo.indexOf(job), 1);
+    }
+  }
+  return job;
+};
+
+function search(id, jobs) {
   for (var i=0; i<jobs.length; i++) {
     if (jobs[i]._id === id) return jobs[i];
   }
-};
+}
 
 
 /// changed - notifies UI of changes
 
 JS.changed = function changed() {
   this.changeCallback();
+};
+
+
+/// load — loads a job
+
+JS.load = function load(jobId, cb) {
+  var self = this;
+  this.socket.emit('build:job', jobId, function(job) {
+    self.newJob(job, 'limbo');
+    cb(job);
+  });
 };
 
 function ensureCommand(phase) {
