@@ -137,17 +137,33 @@ module.exports = function (grunt) {
     },
 
     watch: {
-      assets: {
+      javascripts: {
 
         // Assets to watch:
         files: [
           'assets/js/controllers/**/*.js',
           'assets/js/app.js',
           'assets/js/job_store.js',
-          'assets/js/strider.js' ],
+          'assets/js/strider.js',
+          'assets/js/filters/*.js'],
 
         // When assets are changed:
         tasks: ['compileAssets', 'linkAssets']
+      },
+      partials: {
+
+        files: [
+          'assets/partials/**/*.html'
+        ],
+
+        tasks: ['copy:dev']
+      },
+      styles: {
+        files: [
+          'assets/linker/styles/**/*.css'
+        ],
+
+        tasks: ['copy:dev', 'linkAssets']
       }
     }
   });

@@ -21,10 +21,13 @@ function Strider($resource, opts) {
   /// Restful API setup
   var apiBase  = this.url + '/api';
   var loginURL = this.url + '/login';
-  this.Jobs    = $resource(apiBase + '/jobs');
-  this.Session = $resource(apiBase + '/session');
+  this.Jobs    = $resource(apiBase + '/jobs/');
+  this.Session = $resource(apiBase + '/session/');
+  this.Project = $resource(apiBase + '/project/:owner/:repo/');
+  this.ProjectJobs = $resource(this.url + '/:owner/:repo/jobs/');
 
   this.jobs    = jobStore.jobs;
+  this.phases  = JobStore.phases;
 }
 
 
@@ -68,7 +71,11 @@ S.connect = function(scope) {
 /// deploy
 
 S.deploy = function deploy(project) {
-  this.socket.emit('deploy', project.name);
+  this.socket.emit('deploy', project.name || project);
+};
+
+S.test = function test(project) {
+  this.socket.emit('test', project.name || project);
 };
 
 

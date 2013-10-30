@@ -1,7 +1,7 @@
 var App =
 exports =
 module.exports =
-angular.module('BrowserSwarmApp', ['ngRoute', 'ngResource']);
+angular.module('BrowserSwarmApp', ['ngRoute', 'ngResource', 'ngSanitize']);
 
 var Strider = require('./strider');
 
@@ -11,6 +11,8 @@ App.
   config(['$routeProvider', '$locationProvider', '$httpProvider', configureApp]).
   factory('Strider', ['$resource', Strider]);
 
+
+require('./filters/ansi');
 
 function configureApp($routeProvider, $locationProvider, $httpProvider) {
 

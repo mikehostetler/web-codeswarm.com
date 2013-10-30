@@ -5,7 +5,8 @@ function createJobStore() {
   return new JobStore;
 }
 
-var PHASES = ['environment', 'prepare', 'test', 'deploy', 'cleanup'];
+var PHASES = exports.phases =
+['environment', 'prepare', 'test', 'deploy', 'cleanup'];
 
 var statusHandlers = {
   'started': function (time) {
@@ -253,6 +254,7 @@ JS.load = function load(jobId, cb) {
   this.socket.emit('build:job', jobId, function(job) {
     self.newJob(job, 'limbo');
     cb(job);
+    self.changed();
   });
 };
 
