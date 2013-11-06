@@ -21,10 +21,8 @@ function Strider($resource, opts) {
   /// Restful API setup
   var apiBase  = this.url + '/api';
   var loginURL = this.url + '/login';
-  this.Jobs    = $resource(apiBase + '/jobs/');
   this.Session = $resource(apiBase + '/session/');
-  this.Project = $resource(apiBase + '/project/:owner/:repo/');
-  this.ProjectJobs = $resource(this.url + '/:owner/:repo/jobs/');
+  this.Repo    = $resource(this.url + '/:owner/:repo/');
 
   this.jobs    = jobStore.jobs;
   this.phases  = JobStore.phases;

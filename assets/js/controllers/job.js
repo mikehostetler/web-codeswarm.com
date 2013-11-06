@@ -11,19 +11,13 @@ function JobCtrl($scope, $routeParams, Strider) {
     repo:  $routeParams.repo
   };
 
-  Strider.Project.get(projectSearchOptions, function(project) {
-    $scope.repo = project;
+  Strider.Repo.get(projectSearchOptions, function(repo) {
+    $scope.repo = repo.project
+    $scope.job  = repo.job;
+    $scope.jobs = repo.jobs;
   });
 
   Strider.connect($scope);
-  Strider.job($routeParams.jobid, function(job) {
-    $scope.job = job;
-  });
-
-  Strider.ProjectJobs.query(projectSearchOptions, function(jobs) {
-    $scope.jobs = jobs;
-  });
-
   $scope.deploy = function deploy(job) {
     Strider.deploy(job.project);
   };
