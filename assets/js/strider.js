@@ -22,7 +22,7 @@ function Strider($resource, opts) {
   var apiBase  = this.url + '/api';
   var loginURL = this.url + '/login';
   this.Session = $resource(apiBase + '/session/');
-  this.Repo    = $resource(this.url + '/:owner/:repo/');
+  this.Repo    = $resource(apiBase + '/:owner/:repo');
 
   this.jobs    = jobStore.jobs;
   this.phases  = JobStore.phases;
