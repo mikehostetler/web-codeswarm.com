@@ -4,6 +4,7 @@ App.controller('DashboardCtrl', ['$scope', '$location', 'Strider', DashboardCtrl
 
 function DashboardCtrl($scope, $location, Strider) {
 
+  // TODO: make this more declarative:
   Strider.Session.get(function(user) {
     if (! user.user) $location.path('/login');
     else authenticated();

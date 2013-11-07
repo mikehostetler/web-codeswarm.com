@@ -69,11 +69,38 @@ function configureApp($routeProvider, $locationProvider, $httpProvider) {
       templateUrl: '/partials/login.html',
       controller: 'LoginCtrl'
     }).
+    when('/:owner/:repo/config', {
+      templateUrl: '/partials/config/index.html',
+      controller: 'ConfigCtrl',
+      reloadOnSearch: false
+    }).
     when('/:owner/:repo/job/:jobid', {
       templateUrl: '/partials/job.html',
       controller: 'JobCtrl'
     });
+
 }
+
+/// Dynamic Controllers
+
+App.directive('dynamicController', function($compile, $controller) {
+  return {
+    restrict: 'A',
+    terminal: true,
+    link: function(scope, elm, attrs) {
+      var lastScope;
+      scope.$watch(attrs.dynamicController, function(ctrlName) {
+        if (lastScope) lastScope.$destroy();
+        var newScope = scope.$new();
+        var ctrl = $controller(ctrlName, {$scope: newScope});
+        elm.contents().data('$ngControllerController', ctrl);
+        $compile(elm.contents())(newScope);
+
+        lastScope = newScope;
+      });
+    }
+  }
+})
 
 
 // Simple log function to keep the example simple

@@ -11,7 +11,7 @@
       <a ng-hide="job.running || repo.access_level &lt; 1" ng-click="test(job)" title="Retest" class="clickable test-only-action">
         <i class="fa fa-refresh"></i>
       </a>
-      <a href="{{repo.name}}/config" ng-hide="repo.access_level &lt; 1" title="Configure">
+      <a href="/{{repo.name}}/config" ng-hide="repo.access_level &lt; 1" title="Configure">
         <i class="fa fa-wrench"></i>
       </a>
 
