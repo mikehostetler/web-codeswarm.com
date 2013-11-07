@@ -16,6 +16,7 @@ function ConfigCtrl($scope, $routeParams, Strider, $sce) {
     });
 
     $scope.project = conf.project;
+    $scope.provider = conf.provider;
     $scope.plugins = conf.plugins;
     $scope.runners = conf.runners;
     $scope.branches = conf.branches || [];

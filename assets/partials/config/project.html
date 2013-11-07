@@ -1,5 +1,5 @@
 <div class="project-config" ng-show="branch.name === 'master'">
-  <div id="provider-config" ng-controller="{{ provider.controller }}">
+  <div id="provider-config" dynamic-controller="'Config.' + provider.controller">
     <h3>Provider: {{ provider.title }}</h3>
     <span ng-bind-html="provider.html"></span>
   </div>
