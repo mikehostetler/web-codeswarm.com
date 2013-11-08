@@ -363,7 +363,9 @@ function ConfigCtrl($scope, $routeParams, Strider, $sce) {
           page:"config" },
         success);
 
-      window.location = '/' + $scope.project.name + '/';
+      function success() {
+        window.location = '/' + $scope.project.name + '/';
+      }
     };
 
     $scope.startDeploy = function () {
@@ -374,6 +376,10 @@ function ConfigCtrl($scope, $routeParams, Strider, $sce) {
           type: "TEST_AND_DEPLOY",
           page:"config" },
         success);
+
+      function success() {
+        window.location = '/' + $scope.project.name + '/';
+      }
     };
 
     $scope.saveProject = function () {
