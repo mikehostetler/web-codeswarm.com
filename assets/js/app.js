@@ -1,18 +1,15 @@
+var Strider = require('./strider');
+
 var App =
 exports =
 module.exports =
 angular.module('BrowserSwarmApp', ['ngRoute', 'ngResource', 'ngSanitize']);
-
-var Strider = require('./strider');
 
 /// App Configuration
 
 App.
   config(['$routeProvider', '$locationProvider', '$httpProvider', configureApp]).
   factory('Strider', ['$resource', Strider]);
-
-
-require('./filters/ansi');
 
 function configureApp($routeProvider, $locationProvider, $httpProvider) {
 
@@ -108,12 +105,4 @@ App.directive('dynamicController', function($compile, $controller) {
       });
     }
   }
-})
-
-
-// Simple log function to keep the example simple
-function log () {
-  if (typeof console !== 'undefined') {
-    console.log.apply(console, arguments);
-  }
-}
+});

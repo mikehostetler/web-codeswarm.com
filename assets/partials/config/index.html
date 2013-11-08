@@ -1,7 +1,7 @@
 <div id="config-wrapper" class="ng-cloak" ng-app="config" ng-controller="AlertsCtrl">
   <div ng-controller="ConfigCtrl">
     <div class="notify-wrapper pull-right">
-      <div id="notify" ng-class="{ visible: message.showing }" class="alert alert-[[ message.type ]]">
+      <div id="notify" ng-class="{ visible: message.showing }" class="alert alert-{{ message.type }}">
         <a type="button" class="close" ng-click="clearMessage()">&times;</a>
         <div class="message" ng-bind-html="message.text"></div>
       </div>
@@ -41,13 +41,13 @@
           <li><a id="basic-tab-handle" href="#tab-basic" data-toggle="tab">Branch</a></li>
           <li><a href="#tab-plugins" data-toggle="tab">Plugins</a></li>
 
-          <li ng-repeat="runner in runners" ng-show="!branch.mirror_master &amp;&amp; branch.runner.id === runner">
-            <a href="#runner-{{ runner }}" data-toggle="tab">Runner: {{ runner.title }}</a>
+          <li ng-repeat="(key, runner) in runners" ng-show="!branch.mirror_master &amp;&amp; branch.runner.id === runner">
+            <a href="#runner-{{ key }}" data-toggle="tab">Runner: {{ runner.title }}</a>
           </li>
 
           <li ng-repeat="(key, plugin) in plugins" ng-show="!branch.mirror_master &amp;&amp; configured[branch.name][key]"
               ng-class="{ disabled: !configs[branch.name][key].enabled }">
-            <a href="#plugin-{{ plugin }}" data-toggle="tab">{{ plugin.title }}</a>
+            <a href="#plugin-{{ key }}" data-toggle="tab">{{ plugin.title }}</a>
           </li>
         </ul>
         <div ng-switch="branch.mirror_master">
@@ -74,10 +74,13 @@
             </div>
 
 
-            <div ng-repeat="(key, runner) in runners" id="runner-{{key}}" class="tab-pane" dynamic-controller="'Config.' + runner.controller" ng-init="init(key)" ng-bind-html="runner.html"></div>
+            <div ng-repeat="(key, runner) in runners" id="runner-{{key}}" class="tab-pane">
+              <div dynamic-controller="'Config.' + runner.controller" ng-init="init(key)" ng-bind-html="runner.html"></div>
+            </div>
 
-
-            <div ng-repeat="(key, plugin) in plugins" id="plugin-{{key}}" class="tab-pane plugin-tab" dynamic-controller="'Config.' + plugin.controller" ng-init="init(key)" ng-bind-html="plugin.html"></div>
+            <div ng-repeat="(key, plugin) in plugins" id="plugin-{{key}}" class="tab-pane plugin-tab">
+              <div dynamic-controller="'Config.' + plugin.controller" ng-init="init(key)" ng-bind-html="plugin.html"></div>
+            </div>
 
           </div>
         </div>

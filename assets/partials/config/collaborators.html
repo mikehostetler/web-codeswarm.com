@@ -12,8 +12,8 @@
       <div class="span6">
         <table>
           <tr class="collaborator" ng-repeat="collab in collaborators">
-            <td class="image"><img ng-src="[[ collab.gravatar ]]&s=35"></td>
-            <td class="email">[[collab.email]]</td>
+            <td class="image"><img ng-src="{{collab.gravatar}}&s=35"></td>
+            <td class="email">{{collab.email}}</td>
             <td class="remove" ng-switch="collab.loading">
               <i ng-switch-when="true" class="icon-cog icon-spin"></i>
               <span ng-switch-default ng-hide="collab.owner || collab.yourself" class="clickable" ng-click="remove(collab)">

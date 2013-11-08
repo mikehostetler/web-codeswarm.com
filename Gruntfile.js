@@ -94,7 +94,9 @@ module.exports = function (grunt) {
     browserify: {
       dist: {
         files: {
-          'assets/js/browserswarm.js': ['assets/js/controllers/**/*.js']
+          'assets/js/browserswarm.js': [
+            'assets/js/controllers/**/*.js',
+            'assets/js/filters/**/*.js']
         }
       },
       options: {

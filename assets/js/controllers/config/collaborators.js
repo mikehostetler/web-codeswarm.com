@@ -1,11 +1,8 @@
 var App = require('../../app');
 
-App.controller('Config.CollaboratorsCtrl', ['$scope', ]);
+App.controller('Config.CollaboratorsCtrl', ['$scope', CollaboratorsCtrl]);
 
 function CollaboratorsCtrl($scope) {
-  function remove(ar, item) {
-    ar.splice(ar.indexOf(item), 1);
-  }
   $scope.new_email = '';
   $scope.new_access = 0;
   $scope.collaborators = window.collaborators || [];
@@ -62,4 +59,8 @@ function CollaboratorsCtrl($scope) {
       }
     });
   };
+}
+
+function remove(ar, item) {
+  ar.splice(ar.indexOf(item), 1);
 }

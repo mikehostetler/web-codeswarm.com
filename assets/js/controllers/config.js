@@ -1,4 +1,5 @@
-var App = require('../app');
+var App         = require('../app');
+var fixTemplate = require('./config/_fix_template');
 
 App.controller('ConfigCtrl', ['$scope', '$routeParams', 'Strider', '$sce', ConfigCtrl]);
 
@@ -11,9 +12,23 @@ function ConfigCtrl($scope, $routeParams, Strider, $sce) {
 
   Strider.Config.get(projectSearchOptions, function(conf) {
 
+
+    /// Fix and trust remote HTML
+
     Object.keys(conf.plugins).forEach(function(key) {
-      conf.plugins[key].html = $sce.trustAsHtml(conf.plugins[key].html);
+      conf.plugins[key].html = $sce.trustAsHtml(
+        fixTemplate(conf.plugins[key].html));
     });
+
+    Object.keys(conf.runners).forEach(function(key) {
+      conf.runners[key].html = $sce.trustAsHtml(
+        fixTemplate(conf.runners[key].html));
+    });
+
+    if (conf.provider) {
+      conf.provider.html = $sce.trustAsHtml(
+        fixTemplate(conf.provider.html));
+    }
 
     $scope.project = conf.project;
     $scope.provider = conf.provider;
@@ -32,8 +47,6 @@ function ConfigCtrl($scope, $routeParams, Strider, $sce) {
     $scope.runnerConfigs = {};
 
     $scope.api_root = '/' + $scope.project.name + '/api/';
-
-    var save_branches = {};
 
     $scope.refreshBranches = function () {
       // TODO implement
@@ -438,4 +451,3 @@ function ConfigCtrl($scope, $routeParams, Strider, $sce) {
 
   });
 }
-
