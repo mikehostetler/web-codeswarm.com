@@ -22,8 +22,39 @@ function Strider($resource, opts) {
   var apiBase  = this.url + '/api';
   var loginURL = this.url + '/login';
   this.Session = $resource(apiBase + '/session/');
-  this.Repo    = $resource(apiBase + '/:owner/:repo');
-  this.Config  = $resource(apiBase + '/:owner/:repo/config');
+  this.Repo    = $resource(apiBase + '/:owner/:repo/');
+  this.Config  = $resource(apiBase + '/:owner/:repo/config', {}, {
+    get: {
+      method: 'GET'
+    },
+    save: {
+      method: 'PUT'
+    }
+  });
+  this.RegularConfig  = $resource(this.url + '/:owner/:repo/config', {}, {
+    save: {
+      method: 'PUT'
+    }
+  });
+  this.Config.Branch = $resource(this.url + '/:owner/:repo/config/:branch\\/', {}, {
+    save: {
+      method: 'PUT'
+    }
+  });
+  this.Config.Branch.Runner = $resource(this.url + '/:owner/:repo/config/:branch/runner', {}, {
+    save: {
+      method: 'PUT'
+    }
+  });
+  this.Config.Branch.Plugin  = $resource(this.url + '/:owner/:repo/config/:branch/:plugin', {}, {
+    save: {
+      method: 'PUT'
+    }
+  });
+  this.Provider = $resource(this.url + '/:owner/:repo/provider');
+  this.Cache   = $resource(this.url + '/:owner/:repo/cache');
+  this.Start = $resource(this.url + '/:owner/:repo/start');
+  this.Keygen  = $resource(this.url + '/:owner/:repo/keygen/:branch\\/');
 
   this.jobs    = jobStore.jobs;
   this.phases  = JobStore.phases;

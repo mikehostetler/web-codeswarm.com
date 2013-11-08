@@ -7,7 +7,7 @@ function ConfigCtrl($scope, $routeParams, Strider, $sce) {
 
   var projectSearchOptions = {
     owner: $routeParams.owner,
-    repo:  $routeParams.repo
+    repo: $routeParams.repo
   };
 
   Strider.Config.get(projectSearchOptions, function(conf) {
@@ -29,6 +29,8 @@ function ConfigCtrl($scope, $routeParams, Strider, $sce) {
       conf.provider.html = $sce.trustAsHtml(
         fixTemplate(conf.provider.html));
     }
+
+    /// Get all the conf into the scope for rendering
 
     $scope.project = conf.project;
     $scope.provider = conf.provider;
@@ -71,17 +73,12 @@ function ConfigCtrl($scope, $routeParams, Strider, $sce) {
 
     $scope.clearCache = function () {
       $scope.clearingCache = true;
-      $.ajax('/' + $scope.project.name + '/cache', {
-        type: 'DELETE',
-        success: function () {
-          $scope.clearingCache = false;
-          $scope.success('Cleared the cache', true);
-        },
-        error: function () {
-          $scope.clearingCache = false;
-          $scope.error('Failed to clear the cache', true);
-        }
-      });
+      Strider.Cache.delete(success);
+
+      function success() {
+        $scope.clearingCache = false;
+        $scope.success('Cleared the cache');
+      }
     }
 
     $scope.toggleBranch = function () {
@@ -141,6 +138,7 @@ function ConfigCtrl($scope, $routeParams, Strider, $sce) {
       var plugins = $scope.branch.plugins
         , branch = $scope.branch
         , data = [];
+
       for (var i=0; i<plugins.length; i++) {
         data.push({
           id: plugins[i].id,
@@ -148,22 +146,19 @@ function ConfigCtrl($scope, $routeParams, Strider, $sce) {
           showStatus: plugins[i].showStatus
         });
       }
-      $.ajax({
-        url: '/' + $scope.project.name + '/config/' + $scope.branch.name + '/',
-        type: 'PUT',
-        data: JSON.stringify({plugin_order: data}),
-        contentType: 'application/json',
-        success: function(data, ts, xhr) {
-          $scope.success('Plugin order on branch ' + branch.name + ' saved.', true);
-        },
-        error: function(xhr, ts, e) {
-          if (xhr && xhr.responseText) {
-            $scope.error("Error saving plugin order on branch " + branch.name + ": " + xhr.responseText, true);
-          } else {
-            $scope.error("Error saving plugin order on branch " + branch.name + ": " + e, true);
-          }
-        }
-      });
+
+      Strider.Config.Branch.save(
+        {
+          owner: projectSearchOptions.owner,
+          repo:  projectSearchOptions.repo,
+          branch: branch.name },
+        {
+          plugin_order: data},
+        success);
+
+      function success() {
+        $scope.success('Plugin order on branch ' + branch.name + ' saved.');
+      }
     }
 
     // options for the inUse plugin sortable
@@ -235,35 +230,35 @@ function ConfigCtrl($scope, $routeParams, Strider, $sce) {
       if (plugins) {
         data.plugins = branch.plugins;
       }
-      $.ajax({
-        url: '/' + $scope.project.name + '/config/' + $scope.branch.name + '/',
-        type: 'PUT',
-        data: JSON.stringify(data),
-        contentType: 'application/json',
-        success: function(data, ts, xhr) {
-          $scope.success('General config for branch ' + branch.name + ' saved.', true);
-        },
-        error: function(xhr, ts, e) {
-          if (xhr && xhr.responseText) {
-            $scope.error("Error saving general config for branch " + branch.name + ": " + xhr.responseText, true);
-          } else {
-            $scope.error("Error saving general config for branch " + branch.name + ": " + e, true);
-          }
-        }
-      });
+      Strider.Config.Branch.save(
+        {
+          owner: projectSearchOptions.owner,
+          repo:  projectSearchOptions.repo,
+          branch: branch.name },
+        data,
+        success);
+
+      function success() {
+        $scope.success('General config for branch ' + branch.name + ' saved.');
+      }
     };
 
     $scope.generateKeyPair = function () {
       bootbox.confirm('Really generate a new keypair? This could break things if you have plugins that use the current ones.', function (really) {
         if (!really) return;
-        $.ajax('/' + $scope.project.name + '/keygen/' + $scope.branch.name, {
-          type: 'POST',
-          success: function (data, ts, xhr) {
-            $scope.branch.privkey = data.privkey;
-            $scope.branch.pubkey = data.pubkey;
-            $scope.success('Generated new ssh keypair', true);
-          }
-        });
+        Strider.Keygen.save(
+          {
+            owner: projectSearchOptions.owner,
+            repo:  projectSearchOptions.repo,
+            branch: $scope.branch.name },
+          {},
+          success);
+
+        function success(data) {
+          $scope.branch.privkey = data.privkey;
+          $scope.branch.pubkey = data.pubkey;
+          $scope.success('Generated new ssh keypair');
+        }
       });
     };
 
@@ -286,54 +281,32 @@ function ConfigCtrl($scope, $routeParams, Strider, $sce) {
       if (arguments.length < 2) {
         return $scope.runnerConfigs[name];
       }
-      $.ajax({
-        url: '/' + $scope.project.name + '/config/master/runner',
-        type: 'PUT',
-        contentType: 'application/json',
-        data: JSON.stringify(data),
-        success: function(data, ts, xhr) {
-          $scope.success("Runner config saved.");
-          $scope.runnerConfigs[name] = data.config;
-          next(null, data.config);
-          $scope.$root.$digest();
-        },
-        error: function(xhr, ts, e) {
-          if (xhr && xhr.responseText) {
-            var data = $.parseJSON(xhr.responseText);
-            $scope.error("Error saving runner config: " + data.errors[0]);
-          } else {
-            $scope.error("Error saving runner config: " + e);
-          }
-          next();
-          $scope.$root.$digest();
-        }
-      });
+
+      Strider.Config.Branch.Runner.save(
+        {
+          owner: projectSearchOptions.owner,
+          repo:  projectSearchOptions.repo,
+          branch: 'master' },
+        data,
+        success);
+
+      function success(data) {
+        $scope.success("Runner config saved.");
+        $scope.runnerConfigs[name] = data.config;
+        next && next(null, data.config);
+      }
     };
 
     $scope.providerConfig = function (data, next) {
       if (arguments.length === 0) {
         return $scope.project.provider.config;
       }
-      $.ajax({
-        url: '/' + $scope.project.name + '/provider/',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(data),
-        success: function(data, ts, xhr) {
-          $scope.success("Provider config saved.");
-          next && next();
-          $scope.$root.$digest();
-        },
-        error: function(xhr, ts, e) {
-          if (xhr && xhr.responseText) {
-            $scope.error("Error saving provider config: " + xhr.responseText);
-          } else {
-            $scope.error("Error saving provider config: " + e);
-          }
-          next && next();
-          $scope.$root.$digest();
-        }
-      });
+      Strider.Provider.save(projectSearchOptions, data, success);
+
+      function success() {
+        $scope.success("Provider config saved.");
+        next && next();
+      }
     };
 
     $scope.pluginConfig = function (name, branch, data, next) {
@@ -356,97 +329,67 @@ function ConfigCtrl($scope, $routeParams, Strider, $sce) {
         console.error("pluginConfig called for a plugin that's not configured. " + name, true);
         throw new Error('Plugin not configured: ' + name);
       }
-      $.ajax({
-        url: '/' + $scope.project.name + '/config/' + branch.name + "/" + name,
-        type: "PUT",
-        contentType: 'application/json',
-        data: JSON.stringify(data),
-        success: function(data, ts, xhr) {
-          $scope.success("Config for " + name + " on branch " + branch.name + " saved.");
-          $scope.configs[branch.name][name].config = data;
-          next(null, data);
-          $scope.$root.$digest();
-        },
-        error: function(xhr, ts, e) {
-          if (xhr && xhr.responseText) {
-            var data = $.parseJSON(xhr.responseText);
-            $scope.error("Error saving " + name + " config on branch " + branch.name + ": " + data.errors[0]);
-          } else {
-            $scope.error("Error saving " + name + " config on branch " + branch.name + ": " + e);
-          }
-          next();
-          $scope.$root.$digest();
-        }
-      });
+
+      Strider.Config.Branch.Plugin.save(
+      {
+        owner:  projectSearchOptions.owner,
+        repo:   projectSearchOptions.repo,
+        branch: branch.name,
+        plugin: name },
+      data,
+      success);
+
+      function success() {
+        $scope.success("Config for " + name + " on branch " + branch.name + " saved.");
+        $scope.configs[branch.name][name].config = data;
+        next(null, data);
+      }
     };
 
     $scope.deleteProject = function () {
-      $.ajax({
-        url: '/' + $scope.project.name + '/',
-        type: 'DELETE',
-        success: function () {
-          window.location = '/';
-        },
-        error: function () {
-          $scope.deleting = false;
-          $scope.error('failed to remove project', true);
-        }
-      });
+      Strider.Repo.delete(projectSearchOptions, success);
+
+      function success() {
+        window.location = '/';
+      }
     };
 
     $scope.startTest = function () {
-      $.ajax({
-        url: '/' + $scope.project.name + '/start',
-        data:{branch: $scope.branch.name, type: "TEST_ONLY", page:"config"},
-        type: 'POST',
-        success: function() {
-          window.location = '/' + $scope.project.name + '/';
-        },
-        error: function(xhr, ts, e) {
-          if (xhr && xhr.responseText) {
-            var data = $.parseJSON(xhr.responseText);
-            $scope.error("Error starting test job for " + name + " on branch " + $scope.branch.name + ": " + data.errors[0]);
-          }
-        }
-      });
+      Strider.Start.save(
+        projectSearchOptions,
+        {
+          branch: $scope.branch.name,
+          type: "TEST_ONLY",
+          page:"config" },
+        success);
+
+      window.location = '/' + $scope.project.name + '/';
     };
 
     $scope.startDeploy = function () {
-      $.ajax({
-        url: '/' + $scope.project.name + '/start',
-        data:{branch: $scope.branch.name, type: "TEST_AND_DEPLOY", page:"config"},
-        type: 'POST',
-        success: function() {
-          window.location = '/' + $scope.project.name + '/';
-        },
-        error: function(xhr, ts, e) {
-          if (xhr && xhr.responseText) {
-            var data = $.parseJSON(xhr.responseText);
-            $scope.error("Error starting deploy job for " + name + " on branch " + $scope.branch.name + ": " + data.errors[0]);
-          }
-        }
-      });
+      Strider.Start.save(
+        projectSearchOptions,
+        {
+          branch: $scope.branch.name,
+          type: "TEST_AND_DEPLOY",
+          page:"config" },
+        success);
     };
 
     $scope.saveProject = function () {
-      $.ajax({
-        url: '/' + $scope.project.name + '/config',
-        type: 'PUT',
-        data: JSON.stringify({
-          public: $scope.project.public
-        }),
-        contentType: 'application/json',
-        success: function(data, ts, xhr) {
-          $scope.success('General config saved.', true);
-        },
-        error: function(xhr, ts, e) {
-          if (xhr && xhr.responseText) {
-            $scope.error("Error saving general config: " + xhr.responseText, true);
-          } else {
-            $scope.error("Error saving general config: " + e, true);
-          }
-        }
+      setTimeout(function() {
+        Strider.RegularConfig.save(
+          projectSearchOptions,
+          {
+            public: $scope.project.public
+          },
+          success);
       });
+
+
+      function success() {
+        $scope.success('General config saved.');
+      }
     };
 
   });
