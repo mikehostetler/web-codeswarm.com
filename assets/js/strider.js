@@ -131,8 +131,8 @@ S.post = function(url, body, cb) {
   return this.request('POST', url, body, cb);
 };
 
-S.del = function(url, cb) {
-  return this.request('DELETE', url, cb);
+S.del = function(url, body, cb) {
+  return this.request('DELETE', url, body, cb);
 };
 
 S.get = function(url, cb) {

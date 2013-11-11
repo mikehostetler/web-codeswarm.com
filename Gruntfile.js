@@ -151,7 +151,8 @@ module.exports = function (grunt) {
           'assets/js/strider.js',
           'assets/js/http_interceptor.js',
           'assets/js/filters/*.js',
-          'assets/js/directives/*.js'
+          'assets/js/directives/*.js',
+          'assets/js/lib/*.js'
         ],
 
         // When assets are changed:

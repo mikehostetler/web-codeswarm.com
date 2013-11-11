@@ -54,6 +54,3 @@ function configureApp($routeProvider, $locationProvider, $httpProvider) {
     });
 
 }
-
-/// Dynamic Controllers
-

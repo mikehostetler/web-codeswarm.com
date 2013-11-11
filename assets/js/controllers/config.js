@@ -1,3 +1,4 @@
+var md5         = require('../lib/md5');
 var App         = require('../app');
 var fixTemplate = require('./config/_fix_template');
 
