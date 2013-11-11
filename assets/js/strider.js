@@ -3,15 +3,15 @@ var jobStore = JobStore();
 
 exports = module.exports = BuildStrider;
 
-function BuildStrider($resource) {
-  return new Strider($resource);
+function BuildStrider($resource, $http) {
+  return new Strider($resource, $http);
 }
 
 
 var socket;
 var scopes = [];
 
-function Strider($resource, opts) {
+function Strider($resource, $http, opts) {
   if (! opts) opts = {};
   if (typeof opts == 'string')
     opts = { url: opts };
@@ -65,6 +65,8 @@ function Strider($resource, opts) {
 
   this.jobs    = jobStore.jobs;
   this.phases  = JobStore.phases;
+
+  this.$http = $http;
 }
 
 
@@ -121,3 +123,31 @@ S.test = function test(project) {
 S.job = function job(jobId, cb) {
   jobStore.load(jobId, cb);
 };
+
+
+/// HTTP
+
+S.post = function(url, body, cb) {
+  return this.request('POST', url, body, cb);
+};
+
+S.del = function(url, cb) {
+  return this.request('DELETE', url, cb);
+};
+
+S.request = function(method, url, body, cb) {
+  if (typeof body == 'function') {
+    cb = body;
+    body = undefined;
+  }
+
+  var req = this.$http({
+    method: method,
+    url: this.url + url,
+    data: JSON.stringify(body)
+  });
+
+  req.success(cb);
+
+  return req;
+}

@@ -9,7 +9,7 @@ angular.module('BrowserSwarmApp', ['ngRoute', 'ngResource', 'ngSanitize']);
 
 App.
   config(['$routeProvider', '$locationProvider', '$httpProvider', configureApp]).
-  factory('Strider', ['$resource', Strider]);
+  factory('Strider', ['$resource', '$http', Strider]);
 
 function configureApp($routeProvider, $locationProvider, $httpProvider) {
 
