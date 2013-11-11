@@ -9,16 +9,20 @@ function dynamicController($compile, $controller) {
     link: function(scope, elm, attrs) {
       var lastScope;
       scope.$watch(attrs.dynamicController, function(ctrlName) {
-        if (lastScope) lastScope.$destroy();
+        if (! ctrlName) return;
+
         var newScope = scope.$new();
 
         var ctrl;
-
         try {
           ctrl = $controller(ctrlName, {$scope: newScope});
-        } catch (err) {
+        } catch (_err) {
+          // not found
           return;
         }
+
+
+        if (lastScope) lastScope.$destroy();
 
         elm.contents().data('$ngControllerController', ctrl);
         $compile(elm.contents())(newScope);
@@ -27,4 +31,4 @@ function dynamicController($compile, $controller) {
       });
     }
   }
-});
+};

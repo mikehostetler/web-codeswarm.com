@@ -1,9 +1,9 @@
 var App         = require('../app');
 var fixTemplate = require('./config/_fix_template');
 
-App.controller('ConfigCtrl', ['$scope', '$routeParams', 'Strider', '$sce', ConfigCtrl]);
+App.controller('ConfigCtrl', ['$scope', '$routeParams', '$sce', '$location', 'Strider', ConfigCtrl]);
 
-function ConfigCtrl($scope, $routeParams, Strider, $sce) {
+function ConfigCtrl($scope, $routeParams, $sce, $location, Strider) {
 
   var projectSearchOptions = {
     owner: $routeParams.owner,
@@ -11,7 +11,6 @@ function ConfigCtrl($scope, $routeParams, Strider, $sce) {
   };
 
   Strider.Config.get(projectSearchOptions, function(conf) {
-
 
     /// Fix and trust remote HTML
 
@@ -350,7 +349,7 @@ function ConfigCtrl($scope, $routeParams, Strider, $sce) {
       Strider.Repo.delete(projectSearchOptions, success);
 
       function success() {
-        window.location = '/';
+        $location.path('/');
       }
     };
 
@@ -364,7 +363,7 @@ function ConfigCtrl($scope, $routeParams, Strider, $sce) {
         success);
 
       function success() {
-        window.location = '/' + $scope.project.name + '/';
+        $location.path('/' + $scope.project.name);
       }
     };
 
@@ -378,7 +377,7 @@ function ConfigCtrl($scope, $routeParams, Strider, $sce) {
         success);
 
       function success() {
-        window.location = '/' + $scope.project.name + '/';
+        $location.path('/' + $scope.project.name);
       }
     };
 

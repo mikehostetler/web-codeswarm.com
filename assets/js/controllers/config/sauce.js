@@ -3,6 +3,9 @@ var App = require('../../app');
 App.controller('Config.SauceCtrl', ['$scope', SauceCtrl]);
 
 function SauceCtrl($scope) {
+
+  console.log('SauceCtrl scope 2');
+
   $scope.$watch('configs[branch.name].sauce.config', function (value) {
     $scope.config = value;
     if (!value) return;

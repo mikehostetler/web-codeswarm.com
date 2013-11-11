@@ -95,8 +95,10 @@ module.exports = function (grunt) {
       dist: {
         files: {
           'assets/js/browserswarm.js': [
-            'assets/js/controllers/**/*.js',
-            'assets/js/filters/**/*.js']
+          'assets/js/controllers/**/*.js',
+          'assets/js/filters/**/*.js',
+          'assets/js/directives/**/*.js'
+          ]
         }
       },
       options: {
