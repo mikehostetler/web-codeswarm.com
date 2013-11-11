@@ -149,6 +149,7 @@ module.exports = function (grunt) {
           'assets/js/app.js',
           'assets/js/job_store.js',
           'assets/js/strider.js',
+          'assets/js/http_interceptor.js',
           'assets/js/filters/*.js',
           'assets/js/directives/*.js'
         ],

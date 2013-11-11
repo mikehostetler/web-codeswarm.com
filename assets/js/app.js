@@ -19,34 +19,7 @@ function configureApp($routeProvider, $locationProvider, $httpProvider) {
   /// effectively sending out the session cookie
   $httpProvider.defaults.withCredentials = true;
 
-  var interceptor = ['$rootScope', '$q', function($scope, $q) {
-
-    function success(response) {
-      return response;
-    }
-
-    function error(response) {
-      var status = response.status;
-
-      var resp = response.data;
-      if (resp) try { resp = JSON.parse(resp); } catch(err) { }
-
-      if (resp.message) resp = resp.message;
-      if (! resp) {
-        resp = 'Error in response';
-        if (status) resp += ' (' + status + ')';
-      }
-
-      $scope.$emit('error', new Error(resp));
-
-      return $q.reject(response);
-    }
-
-    return function (promise) {
-      return promise.then(success, error);
-    }
-
-  }];
+  var interceptor = require('./http_interceptor');
 
   $httpProvider.responseInterceptors.push(interceptor);
 
