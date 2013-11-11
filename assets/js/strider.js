@@ -18,11 +18,12 @@ function Strider($resource, opts) {
 
   this.url = opts.url || '//localhost:3000';
 
-  /// Restful API setup
+  /// RESTful API setup
   var apiBase  = this.url + '/api';
   var loginURL = this.url + '/login';
   this.Session = $resource(apiBase + '/session/');
   this.Repo    = $resource(apiBase + '/:owner/:repo/');
+  this.Job     = $resource(apiBase + '/:owner/:repo/job/:jobid');
   this.Config  = $resource(apiBase + '/:owner/:repo/config', {}, {
     get: {
       method: 'GET'
@@ -55,6 +56,12 @@ function Strider($resource, opts) {
   this.Cache   = $resource(this.url + '/:owner/:repo/cache');
   this.Start = $resource(this.url + '/:owner/:repo/start');
   this.Keygen  = $resource(this.url + '/:owner/:repo/keygen/:branch\\/');
+
+  this.StatusBlocks = $resource(this.url + '/statusBlocks', {}, {
+    get: {
+      method: 'GET'
+    }
+  });
 
   this.jobs    = jobStore.jobs;
   this.phases  = JobStore.phases;

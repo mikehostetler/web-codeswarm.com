@@ -1,167 +1,78 @@
-<div class="row-fluid job-page-intro ng-scope">
-  <div class="span12 job-title">
-
-    <div class="pull-right btn btn-warning ng-binding" ng-click="clearCache()" ng-disabled="clearingCache">
-      Clear Cache
+<div id="build-page" class="main">
+  <div class="row-fluid job-page-intro">
+    <div class="span12 job-title">
+      <h3>
+        <span ng-show="currentUser">
+          <span ng-show="!job.running && project.access_level > 0"
+                ng-click="startDeploy(job)"
+                title="Retest &amp; Deploy"
+                class="clickable test-and-deploy-action">
+            <i class="icon-cloud-upload"></i>
+          </span>
+          <span ng-hide="job.running || project.access_level < 1" ng-click="startTest(job)"
+                title="Retest" class="clickable test-only-action">
+            <i class="icon-refresh"></i>
+          </span>
+          <a href="/{{ project.display_name }}/config" ng-hide="project.access_level < 1" title="Configure">
+            <i class="icon-wrench"></i>
+          </a>
+        </span>
+        <span class='job-repo'>{{ project.display_name }}</span>
+        <a href="{{ project.display_url }}" target="_blank">
+          <i class="icon-github"></i>
+        </a>
+      </h3>
     </div>
-    <h3>
-      <a ng-show="!job.running &amp;&amp; repo.access_level > 0" ng-click="deploy(job)" title="Retest &amp; Deploy" class="clickable test-and-deploy-action ng-hide">
-        <i class="fa fa-cloud-upload"></i>
-      </a>
-      <a ng-hide="job.running || repo.access_level &lt; 1" ng-click="test(job)" title="Retest" class="clickable test-only-action">
-        <i class="fa fa-refresh"></i>
-      </a>
-      <a href="/{{repo.name}}/config" ng-hide="repo.access_level &lt; 1" title="Configure">
-        <i class="fa fa-wrench"></i>
-      </a>
-
-      <span class="job-repo">{{repo.name}}</span>
-      <a href="https://github.com/{{repo.name}}" target="_blank">
-        <i class="fa fa-github"></i>
-      </a>
-    </h3>
   </div>
-</div>
-<div class="job-main ng-scope">
-  <div class="row-fluid job-wrap">
-    <div class="span8 job-left-col">
-      <div class="row-fluid errored" id="build-metadata">
-        <table>
-          <tbody>
-            <tr class="dashboard-row">
-              <td class="job-link">
-                <a href="/{{repo.name}}/job/{{job._id}}">
-                  <i ng-hide="job.nojobs" data-toggle="tooltip" class="fa fa-minus-sign error-text" data-original-title="errored"></i>
-                  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
-                </a>
-              </td>
-              <td class="project-name">
-                <a href="/{{repo.name}}"></a>
-              </td>
-              <td class="history">
-                <table class="last-builds">
-                  <tbody>
-                    <tr>
-                   </tr>
-                  </tbody>
-                </table>
-              </td>
-
-              <td class="committer">
-                <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
-                  <img src="{{job.trigger.author.image}}">
-                </div>
-              </td>
-
-              <td class="commit-url" ng-switch="!!job.trigger.url">
-                <span class="small-text ng-scope ng-binding">
-                  <i class="fa trigger-icon fa-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
-                  Manually Redeploying
-                </span>
-              </td>
-
-              <td class="github-link ng-hide">
-                <a href="https://github.com/{{repo.name}}" target="_blank">
-                  <i class="fa fa-globe"></i>
-                </a>
-              </td>
-
-              <td class="run-time" ng-switch="job.status">
-                <time ng-switch-default="" class="duration ng-scope seconds" duration="{{job.duration}}" ng-hide="job.nojobs">{{job.duration / 1000}}</time>
-              </td>
-
-              <td class="finished-at" ng-switch="job.status === 'running'">
-                <span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
-                  <time data-toggle="tooltip" data-placement="top" datetime="{{job.finished}}" class="timeago" data-original-title="" title="{{job.finished}}"></time>
-                </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="status-node plugin-status job-plugin-status" plugin-status="node">
-        <i class="fa fa-fixed-width fa-ellipsis-horizontal"></i>
-          <strong>Node tests</strong>
-          pending
-      </div>
-
-      <div class="console-output">
-        <i class="fa fa-gear fa-light fa-spin loading-icon ng-hide" ng-show="loading"></i>
-
-        <div ng-repeat="phase in phases" class="phase phase-prepare" ng-class="{ collapsed: job.phases[phase].collapsed }" ng-show="job.phases[phase].commands.length">
-          <div class="title" ng-click="job.phases[phase].collapsed = !job.phases[phase].collapsed">
-            <i class="arrow fa fa-caret-down"></i>
-            <span class="name ng-binding">prepare</span>
-            <span class="pull-right meta">
-              <time class="duration" datetime="{{job.phases[phase].started}}" since="{{job.phases[phase].started}}" duration="{{job.phases[phase].duration}}" data-original-title="">{{job.phases[phase].duration / 1000}}</time>
-
-              <span class="exit-status ng-binding" ng-show="job.phases[phase].exitCode">{{job.phases[phase].exitCode}}</span>
-            </span>
+  <div class='job-main'>
+      <div class='row-fluid job-wrap'>
+        <div class='span8 job-left-col'>
+          <div class="row-fluid {{ job.status }}" id="build-metadata">
+            <table>
+              <tbody>
+                <tr class="dashboard-row" ng-include="'/partials/dashboard/row.html'">
+                </tr>
+              </tbody>
+            </table>
           </div>
-
-          <div class="commands" ng-hide="job.phases[phase].collapsed">
-            <div ng-repeat="command in job.phases[phase].commands" ng-class="{ comment: command.comment }" class="command plugin-github">
-              <div class="title" ng-click="command.collapsed = !command.collapsed">
-                <span class="prompt">$</span> <span class="command-text">{{command.command}}</span>
-                <i class="fa fa-plus plus" ng-show="command.collapsed"></i>
-                <span class="meta pull-right">
-                <span class="plugin">{{command.plugin}}</span>
-                <time datetime="{{command.started}}" since="{{command.started}}" duration="{{command.duration}}" class="seconds">{{command.duration / 2}}</time>
-                <span class="exit-status" toggle="tooltip" ng-show="job.phases[phase].exitCode" data-original-title="exit code">{{job.phases[phase].exitCode}}</span>
-              </span>
+          <div class='row job-pre-console'>
+            <div class='span12 job-pre-console-inner'>
             </div>
-
-            <pre class="job-output" ng-hide="command.collapsed" ng-bind-html="command.merged | ansi"></pre>
           </div>
 
+          <div ng-repeat="(key, block) in statusBlocks.runner"
+              class="status-{{ key }} plugin-status runner-status {{ block.attrs.class }}"
+              plugin-status="{{ key }}"
+              ng-bind-html="block.html"
+              {{block.attrs_html}}>
+          </div>
+
+          <div ng-show="statusBlocks.provider[project.provider.id]"
+               ng-init="block = statusBlocks.provider[project.provider.id]" class="status-{{ project.provider.id }} provider-status {{ block.attrs.class }}"
+               plugin-status="{{ project.provider.id }}"
+               ng-bind-html="block.html"
+               {{block.attrs_html}}>
+          </div>
+
+          <div ng-repeat="(key, block) in statusBlocks.runner"
+              class="status-{{ key }} job-plugin-status {{ block.attrs.class }}"
+              plugin-status="{{ key }}"
+              ng-bind-html="block.html"
+              {{block.attrs_html}}>
+          </div>
+
+          <div class="console-output">
+            <i class="icon-gear icon-light icon-spin loading-icon" ng-show="loading"></i>
+            <div ng-include="'/partials/build/console.html'"></div>
+            <div class="build-error" ng-show="job.status === 'errored' && job.error">
+              <div class="alert alert-error">{{ job.error.message }}</div>
+              <pre>{{ job.error.stack }}</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class='span4 job-detail-sidebar pull-right' ng-include="'/partials/build/history.html'">
         </div>
       </div>
-    </div>
-
-    <div class="span4 job-detail-sidebar pull-right">
-      <div class="build-list-header">
-        <h3>Past Builds</h3>
-      </div>
-
-      <div id="list-of-builds">
-        <table class="table">
-          <thead></thead>
-          <tbody>
-            <tr ng-repeat="job in jobs" class="row-fluid build-list-item errored active" data-id="{{job._id}}" ng-click="selectJob(job._id)" ng-class="{active:job._id === $parent.job._id}">
-              <td class="job-link">
-                <a href="/{{repo.name}}/job/{{job._id}}">
-                  <i ng-hide="job.nojobs" data-toggle="tooltip" class="icon-minus-sign error-text" data-original-title="errored"></i>
-                  <span ng-show="job.nojobs" class="ng-hide">No job history</span>
-                  <span class="ng-binding">{{job._id}}</span>
-                </a>
-              </td>
-
-              <td class="committer">
-                <div ng-show="job.trigger.author.image" ng-switch="!!job.trigger.author.url" class="ng-hide">
-                  <img ng-switch-when="false" ng-src="job.trigger.author.image" class="ng-scope">
-                </div>
-              </td>
-              <td class="commit-url" ng-switch="!!job.trigger.url">
-                <span class="small-text ng-scope ng-binding" ng-switch-default="">
-                  <i class="trigger-icon fa fa-hand-right" data-toggle="tooltip" data-original-title="Manual"></i>
-                    Manually Redeploying
-                </span>
-              </td>
-
-              <td class="run-time" ng-switch="job.status">
-                <time ng-switch-default="" class="duration ng-scope seconds" duration="{{job.duration}}" ng-hide="job.nojobs">{{job.duration / 1000}}s</time>
-              </td>
-
-              <td class="finished-at" ng-switch="job.status === 'running'">
-                <span ng-switch-when="false" class="small-text ng-scope" ng-hide="job.nojobs || job.status === 'submitted'">
-                  <time data-toggle="tooltip" data-placement="top" datetime="{{job.started}}" class="timeago">AGO AGO!!!</time>
-                </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
   </div>
 </div>

@@ -1,6 +1,6 @@
 var app = require('../app');
 
-app.filter('ansi', function () {
+app.filter('ansi', ['$sce', function ($sce) {
   return function (input) {
     if (!input) return '';
     var text = input.replace(/^[^\n\r]*\u001b\[2K/gm, '')
@@ -12,9 +12,9 @@ app.filter('ansi', function () {
                     .replace(/>/g, '&gt;')
                     .replace(/'/g, '&#39;')
                     .replace(/"/g, '&quot;');
-    return ansifilter(text);
+    return $sce.trustAsHtml(ansifilter(text));
   }
-});
+}]);
 
 function ansiparse(str) {
   //

@@ -147,7 +147,9 @@ module.exports = function (grunt) {
           'assets/js/app.js',
           'assets/js/job_store.js',
           'assets/js/strider.js',
-          'assets/js/filters/*.js'],
+          'assets/js/filters/*.js',
+          'assets/js/directives/*.js'
+        ],
 
         // When assets are changed:
         tasks: ['compileAssets', 'linkAssets']
