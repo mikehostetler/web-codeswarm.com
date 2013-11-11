@@ -1,8 +1,8 @@
 var App = require('../../app');
 
-App.controller('Config.HerokuController', ['$scope', HerokuCtrl]);
+App.controller('Config.HerokuController', ['$scope', 'Strider', HerokuCtrl]);
 
-function HerokuCtrl($scope, $element) {
+function HerokuCtrl($scope, Strider) {
   $scope.$watch('userConfigs.heroku', function (value) {
     if (!value) return
     $scope.userConfig = value;
@@ -30,15 +30,11 @@ function HerokuCtrl($scope, $element) {
   };
   $scope.getApps = function () {
     if (!$scope.account) return console.warn('tried to getApps but no account');
-    $.ajax('/ext/heroku/apps/' + $scope.account.id, {
-      type: 'GET',
-      success: function (body, req) {
-        $scope.account.cache = body;
-        $scope.success('Got accounts list for ' + $scope.account.email, true);
-      },
-      error: function () {
-        $scope.error('Failed to get accounts list for ' + $scope.account.email, true);
-      }
-    });
+    Strider.get('/ext/heroku/apps/' + encodeURIComponent($scope.account.id), success);
+
+    function success (body, req) {
+      $scope.account.cache = body;
+      $scope.success('Got accounts list for ' + $scope.account.email, true);
+    }
   };
 }

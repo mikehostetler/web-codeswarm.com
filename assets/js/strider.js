@@ -53,9 +53,9 @@ function Strider($resource, $http, opts) {
     }
   });
   this.Provider = $resource(this.url + '/:owner/:repo/provider');
-  this.Cache   = $resource(this.url + '/:owner/:repo/cache');
+  this.Cache  = $resource(this.url + '/:owner/:repo/cache');
   this.Start = $resource(this.url + '/:owner/:repo/start');
-  this.Keygen  = $resource(this.url + '/:owner/:repo/keygen/:branch\\/');
+  this.Keygen = $resource(this.url + '/:owner/:repo/keygen/:branch\\/');
 
   this.StatusBlocks = $resource(this.url + '/statusBlocks', {}, {
     get: {
@@ -133,6 +133,10 @@ S.post = function(url, body, cb) {
 
 S.del = function(url, cb) {
   return this.request('DELETE', url, cb);
+};
+
+S.get = function(url, cb) {
+  return this.request('GET', url, cb);
 };
 
 S.request = function(method, url, body, cb) {

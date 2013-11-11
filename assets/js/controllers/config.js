@@ -297,6 +297,7 @@ function ConfigCtrl($scope, $routeParams, $sce, $location, Strider) {
     };
 
     $scope.providerConfig = function (data, next) {
+      console.log('provider config');
       if (arguments.length === 0) {
         return $scope.project.provider.config;
       }
@@ -330,13 +331,14 @@ function ConfigCtrl($scope, $routeParams, $sce, $location, Strider) {
       }
 
       Strider.Config.Branch.Plugin.save(
-      {
-        owner:  projectSearchOptions.owner,
-        repo:   projectSearchOptions.repo,
-        branch: branch.name,
-        plugin: name },
-      data,
-      success);
+        {
+          owner:  projectSearchOptions.owner,
+          repo:   projectSearchOptions.repo,
+          branch: branch.name,
+          plugin: name
+        },
+        data,
+        success);
 
       function success() {
         $scope.success("Config for " + name + " on branch " + branch.name + " saved.");

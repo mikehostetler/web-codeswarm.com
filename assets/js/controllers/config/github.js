@@ -4,8 +4,6 @@ App.controller('Config.GithubCtrl', ['$scope', 'Strider', GithubCtrl]);
 
 function GithubCtrl($scope, Strider) {
 
-  console.log('Githubbing scope 2');
-
   $scope.config = $scope.providerConfig();
   $scope.new_username = "";
   $scope.new_level = "tester";
