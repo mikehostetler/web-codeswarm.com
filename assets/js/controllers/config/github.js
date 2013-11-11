@@ -1,8 +1,8 @@
 var App = require('../../app');
 
-App.controller('Config.GithubCtrl', ['$scope', GithubCtrl]);
+App.controller('Config.GithubCtrl', ['$scope', 'Strider', GithubCtrl]);
 
-function GithubCtrl($scope) {
+function GithubCtrl($scope, Strider) {
 
   console.log('Githubbing scope 2');
 
@@ -25,32 +25,25 @@ function GithubCtrl($scope) {
 
   $scope.addWebhooks = function () {
     $scope.loadingWebhooks = true;
-    $.ajax($scope.api_root + 'github/hook', {
-      type: 'POST',
-      success: function () {
-        $scope.loadingWebhooks = false;
-        $scope.success('Set github webhooks', true);
-      },
-      error: function () {
-        $scope.loadingWebhooks = false;
-        $scope.error('Failed to set github webhooks', true);
-      }
-    });
+
+    Strider.post($scope.api_root + 'github/hook', success);
+
+    function success() {
+      console.log('SUCCESS');
+      $scope.loadingWebhooks = false;
+      $scope.success('Set github webhooks');
+    }
   };
 
   $scope.deleteWebhooks = function () {
     $scope.loadingWebhooks = true;
-    $.ajax($scope.api_root + 'github/hook', {
-      type: 'DELETE',
-      success: function () {
-        $scope.loadingWebhooks = false;
-        $scope.success('Removed github webhooks', true);
-      },
-      error: function () {
-        $scope.loadingWebhooks = false;
-        $scope.error('Failed to remove github webhooks', true);
-      }
-    });
+
+    Strider.del($scope.api_root + 'github/hook', success);
+
+    function success() {
+      $scope.loadingWebhooks = false;
+      $scope.success('Removed github webhooks');
+    }
   };
 
   $scope.removeWL = function (user) {
