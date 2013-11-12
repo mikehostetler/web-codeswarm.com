@@ -73,7 +73,7 @@ function ConfigCtrl($scope, $routeParams, $sce, $location, Strider) {
 
     $scope.clearCache = function () {
       $scope.clearingCache = true;
-      Strider.Cache.delete(success);
+      Strider.Cache.delete(projectSearchOptions, success);
 
       function success() {
         $scope.clearingCache = false;
