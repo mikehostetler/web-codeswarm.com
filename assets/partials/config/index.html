@@ -79,8 +79,6 @@
             </div>
 
             <div ng-repeat="(key, plugin) in plugins" id="plugin-{{key}}" class="tab-pane plugin-tab">
-              <p ng-bind="key"></p>
-              <p ng-bind="plugin.controller"></p>
               <div dynamic-controller="'Config.' + plugin.controller" ng-init="init(key)" ng-bind-html="plugin.html"></div>
             </div>
 
