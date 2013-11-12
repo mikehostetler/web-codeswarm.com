@@ -31,9 +31,17 @@ function configureApp($routeProvider, $locationProvider, $httpProvider) {
   /// Routes
 
   $routeProvider.
+    when('/', {
+      templateUrl: '/partials/index.html'
+    }).
     when('/dashboard', {
       templateUrl: '/partials/dashboard/index.html',
       controller: 'DashboardCtrl'
+    }).
+    when('/projects', {
+      templateUrl: '/partials/projects/index.html',
+      controller: 'ProjectsCtrl',
+      reloadOnSearch: false
     }).
     when('/login', {
       templateUrl: '/partials/login.html',
@@ -51,6 +59,7 @@ function configureApp($routeProvider, $locationProvider, $httpProvider) {
     when('/:owner/:repo/job/:jobid', {
       templateUrl: '/partials/job.html',
       controller: 'JobCtrl'
-    });
+    })
+  ;
 
 }

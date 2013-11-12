@@ -178,6 +178,7 @@ var angularView = {
   '/',
   '/login',
   '/dashboard',
+  '/projects',
   '/:owner/:repo/config',
   '/:owner/:repo/job/:jobid'
 ].

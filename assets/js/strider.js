@@ -132,6 +132,10 @@ S.post = function(url, body, cb) {
   return this.request('POST', url, body, cb);
 };
 
+S.put = function(url, body, cb) {
+  return this.request('PUT', url, body, cb);
+};
+
 S.del = function(url, body, cb) {
   return this.request('DELETE', url, body, cb);
 };

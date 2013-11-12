@@ -5,3 +5,8 @@ body {
   padding: 40px 15px;
 }
 
+li.repo {
+  display: inline-block;
+  width: 100%;
+  padding: 1em
+}
