@@ -7,7 +7,7 @@ function RunnerController($scope) {
   $scope.init = function(name) {
     $scope.saving = false;
     $scope.$watch('runnerConfigs[branch.name]["' + name + '"]', function (value) {
-      console.log('Runner config', name, value, $scope.runnerConfigs);
+      // console.log('Runner config', name, value, $scope.runnerConfigs);
       $scope.config = value;
     });
   };

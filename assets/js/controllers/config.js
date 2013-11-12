@@ -298,7 +298,6 @@ function ConfigCtrl($scope, $routeParams, $sce, $location, Strider) {
     };
 
     $scope.providerConfig = function (data, next) {
-      console.log('provider config');
       if (arguments.length === 0) {
         return $scope.project.provider.config;
       }
