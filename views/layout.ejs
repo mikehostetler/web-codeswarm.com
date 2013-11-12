@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="/linker/styles/bootstrap.css">
     <link rel="stylesheet" href="/linker/styles/custom.css">
     <!--STYLES END-->
+    <!-- TODO: host fontawesome stuff here? I hear Firefox can have trouble with this -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
     <style>
       [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
@@ -55,10 +56,15 @@
 
 
     <!-- LES SCRIPTS -->
+    <!-- TODO: bundle and minify most of these: -->
+    <!-- TODO: bundle JQuery? -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/js/vendor/jquery.timeago.js"></script>
     <script src="/js/vendor/bootstrap.js"></script>
     <script src="/js/vendor/socket.io.js"></script>
-    <script src="/js/vendor/angular/angular.min.js"></script>
+    <script src="/js/vendor/angular/angular.js"></script>
+    <!-- TODO: load angular minified in production env. bundle it? -->
+    <!--<script src="/js/vendor/angular/angular.min.js"></script>-->
     <script src="/js/vendor/angular/angular-route.min.js"></script>
     <script src="/js/vendor/angular/angular-resource.min.js"></script>
     <script src="/js/vendor/angular/angular-sanitize.min.js"></script>

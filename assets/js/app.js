@@ -32,7 +32,7 @@ function configureApp($routeProvider, $locationProvider, $httpProvider) {
 
   $routeProvider.
     when('/dashboard', {
-      templateUrl: '/partials/dashboard.html',
+      templateUrl: '/partials/dashboard/index.html',
       controller: 'DashboardCtrl'
     }).
     when('/login', {

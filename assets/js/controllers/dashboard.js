@@ -1,23 +1,36 @@
 var App = require('../app');
 
-App.controller('DashboardCtrl', ['$scope', '$location', 'Strider', DashboardCtrl]);
+App.controller('DashboardCtrl', ['$scope', 'Strider', DashboardCtrl]);
 
-function DashboardCtrl($scope, $location, Strider) {
+function DashboardCtrl($scope, Strider) {
+
+  $scope.phases = Strider.phases;
+
 
   // TODO: make this more declarative:
   Strider.Session.get(function(user) {
-    if (! user.user) $location.path('/login');
-    else authenticated();
+    if (user.user) $scope.currentUser = user.user;
   });
 
-  function authenticated() {
-    $scope.jobs = Strider.jobs;
-    Strider.connect($scope);
-    Strider.jobs.dashboard();
-  }
+  Strider.get('/dashboard', function(resp) {
+    $scope.jobs = resp.jobs;
+    $scope.availableProviders = resp.availableProviders;
 
-  $scope.deploy = function deploy(project) {
-    Strider.deploy(project);
+    console.log('setting strider jobs to', $scope.jobs);
+    Strider.jobs = $scope.jobs;
+    Strider.connect($scope);
+  });
+
+  // $scope.jobs = Strider.jobs;
+  // Strider.connect($scope);
+  // Strider.jobs.dashboard();
+
+  $scope.startDeploy = function deploy(job) {
+    Strider.deploy(job.project);
+  };
+
+  $scope.startTest = function test(job) {
+    Strider.test(job.project);
   };
 
 }

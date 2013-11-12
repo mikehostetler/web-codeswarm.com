@@ -1,0 +1,98 @@
+<div>
+  <div id="spinner" class="alert alert-info hide" ng-show="running.status === 'running' || running.status === 'submitted'">
+    <img class='spinner' src="/images/spinner.gif" />
+    <span ng-switch="running.status">
+      <span ng-switch-when="running">Running job...</span>
+      <span ng-switch-when="submitted">Job submitted...</span>
+    </span>
+  </div>
+</div>
+<div id="dashboard">
+  <div>
+    <div class="row-fluid">
+      <div class="span12 dashboard-section">
+
+        <div ng-show="!currentUser">
+          <div class='StriderBlock_LoggedOutFillContent' ng-include="'/partials/user/signup.html'"></div>
+          <script>
+            $(document).ready(function() {
+            $('#layout-header').hide();
+            $('#invite-box').height($('#signup-box').height());
+            });
+          </script>
+        </div>
+
+        <div ng-show="currentUser &amp;&amp; jobs.yours.length < 1"
+             class="alert alert-info no-projects"
+             data-test="no-personal-projects">
+          <h3>You don't have any projects configured.</h3>
+
+          <div ng-show="availableProviders.length">
+            <h4>Link Accounts:</h4>
+            <span class="link-accounts" ng-repeat="provider in availableProviders" ng-show="provider.setupLink">
+              <a href="{{ provider.setupLink }}" class="btn btn-primary provider-{{provider.id}}">
+              <i ng-show="provider.inline_icon" class="fa fa-{{ provider.inline_icon }}"></i>{{ provider.title }}
+            </a>
+            </span>
+          </div>
+
+          <div ng-show="! currentUser">
+            <a class="btn btn-primary" href="/account">Configure Accounts</a>
+          </div>
+
+          <div ng-show="currentUser">
+            <a class="btn btn-success" href="/projects">Add projects</a>
+
+            <div ng-show="! jobs.yours.length">
+              or <a class="btn btn-success" href="/projects#manual">Add a project manually</a>
+            </div>
+          </div>
+
+        </div>
+
+        <div ng-show="jobs.yours.length">
+          <h3>Your Projects</h3 ng-cloak>
+          <table id="job-list" class="table">
+            <thead>
+              <th class="deploy-header"></th>
+              <th class="job-header">Job</th>
+              <th class="refresh-header"></th>
+              <th class="configure-header"></th>
+              <th>Project</th>
+              <th class='history'></th>
+              <th class="committer-header"></th>
+              <th class="commit-header">Commit</th>
+              <th class="github-header"></th>
+              <th colspan="2">Duration</th>
+              <th></th>
+            </thead>
+
+            <tbody>
+              <tr ng-repeat="job in jobs.yours" ng-include="'/partials/dashboard/row.html'"></tr>
+            </tbody>
+          </table>
+        </div>
+        <div ng-show="jobs.public.length">
+          <h3>Public Projects</h3 ng-cloak>
+          <table id="job-list" class="table">
+            <thead>
+              <th class="job-header">Job</th>
+              <th>Project</th>
+              <th class='history'></th>
+              <th class="committer-header"></th>
+              <th class="commit-header">Commit</th>
+              <th class="github-header"></th>
+              <th colspan="2">Duration</th>
+              <th></th>
+            </thead>
+
+            <tbody>
+              <tr ng-repeat="job in jobs.public" ng-include="'/partials/dashboard/row.html'"></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
