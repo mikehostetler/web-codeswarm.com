@@ -9,7 +9,6 @@ function ProjectsCtrl($scope, $sce, Strider) {
       $scope.currentUser = session.user;
       $scope.accounts = session.user.accounts;
     }
-    console.log('accounts: ', $scope.accounts);
   });
 
   Strider.get('/api/projects', function(resp) {
@@ -68,8 +67,6 @@ function ProjectsCtrl($scope, $sce, Strider) {
     };
 
     $scope.startTest = function (repo) {
-
-      console.log('start test:', repo);
 
       Strider.post('/' + repo.project.name + '/start', success);
 
