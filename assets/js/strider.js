@@ -63,7 +63,6 @@ function Strider($resource, $http, opts) {
     }
   });
 
-  this.jobs    = jobStore.jobs;
   this.phases  = JobStore.phases;
 
   this.$http = $http;
@@ -85,11 +84,13 @@ function changed() {
 
 /// connect
 
-S.connect = function(scope) {
+S.connect = function(scope, jobs) {
   if (! socket) {
     socket = io.connect(this.url);
 
     /// connects job store to new socket
+    if (jobs) jobStore.setJobs(jobs);
+
     jobStore.connect(socket, changed);
   }
   this.socket = socket;

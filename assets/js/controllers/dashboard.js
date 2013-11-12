@@ -16,9 +16,7 @@ function DashboardCtrl($scope, Strider) {
     $scope.jobs = resp.jobs;
     $scope.availableProviders = resp.availableProviders;
 
-    console.log('setting strider jobs to', $scope.jobs);
-    Strider.jobs = $scope.jobs;
-    Strider.connect($scope);
+    Strider.connect($scope, $scope.jobs);
   });
 
   // $scope.jobs = Strider.jobs;

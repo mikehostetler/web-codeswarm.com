@@ -23,8 +23,6 @@ var statusHandlers = {
     this.phase = PHASES.indexOf(data.phase) + 1;
   },
   // this is just so we'll trigger the "unknown job" lookup sooner on the dashboard
-  'stdout': function (text) {},
-  'stderr': function (text) {},
   'warning': function (warning) {
     if (!this.warnings) {
       this.warnings = [];
@@ -52,7 +50,7 @@ var statusHandlers = {
       }
       extend(parent[last], data.data)
     } else {
-      console.error('Invalid "plugin data" method received from plugin', data.plugin, data.method, data)
+      console.log('Invalid "plugin data" method received from plugin', data.plugin, data.method, data)
     }
   },
 
@@ -118,7 +116,7 @@ var statusHandlers = {
 
 function JobStore() {
   this.jobs = {
-    dashboard: dashboard.bind(this),
+    // dashboard: dashboard.bind(this),
     public: [],
     yours: [],
     limbo: []
@@ -151,6 +149,13 @@ JS.connect = function connect(socket, changeCallback) {
   socket.on('job.new', JS.newJob.bind(this));
 };
 
+/// setJobs
+
+JS.setJobs = function setJobs(jobs) {
+  this.jobs.yours = jobs.yours;
+  this.jobs.public = jobs.public;
+};
+
 
 /// update - handle update event
 
@@ -158,7 +163,8 @@ JS.update = function update(event, args, access, dontchange) {
   var id = args.shift()
     , job = this.job(id, access)
     , handler = statusHandlers[event];
-  if (!job) return this.unknown(id, event, args, access)
+
+  if (!job) return; // this.unknown(id, event, args, access)
   if (!handler) return;
   if ('string' === typeof handler) {
     job.status = handler;
@@ -202,7 +208,7 @@ JS.newJob = function newJob(job, access) {
     }
   }
 
-  if (found !== -1) {
+  if (found > -1) {
     old = jobs.splice(found, 1)[0];
     job.project.prev = old.project.prev;
   }
@@ -234,8 +240,10 @@ JS.job = function job(id, access) {
 };
 
 function search(id, jobs) {
+  var job;
   for (var i=0; i<jobs.length; i++) {
-    if (jobs[i]._id === id) return jobs[i];
+    job = jobs[i];
+    if (job && job._id === id) return job;
   }
 }
 
