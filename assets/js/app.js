@@ -30,6 +30,11 @@ function configureApp($routeProvider, $locationProvider, $httpProvider) {
 
   /// Routes
 
+  var reload = {
+    controller: 'ReloadCtrl',
+    template: '<div>Please wait, redirecting</div>'
+  };
+
   $routeProvider.
     when('/', {
       templateUrl: '/partials/index.html'
@@ -53,6 +58,9 @@ function configureApp($routeProvider, $locationProvider, $httpProvider) {
       controller: 'AccountCtrl',
       reloadOnSearch: false
     }).
+
+    when('/auth/github', reload).
+
     when('/:owner/:repo/config', {
       templateUrl: '/partials/config/index.html',
       controller: 'ConfigCtrl',
@@ -69,3 +77,4 @@ function configureApp($routeProvider, $locationProvider, $httpProvider) {
   ;
 
 }
+

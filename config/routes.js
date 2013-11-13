@@ -170,10 +170,6 @@ exports.routes = {
  * Map Angular routes to index view
  */
 
-var angularView = {
-  view: 'index'
-};
-
 [
   '/',
   '/login',
@@ -182,7 +178,23 @@ var angularView = {
   '/account',
   '/:owner/:repo/config',
   '/:owner/:repo/job/:jobid'
-].
-forEach(function(path) {
-  exports.routes[path] = angularView;
-});
+].forEach(inject({
+  view: 'index'
+}));
+
+
+/**
+ * Map Proxied routes
+ */
+
+[
+  '/auth/github'
+].forEach(inject({
+  controller: 'ProxyController'
+}));
+
+function inject(conf) {
+  return function(path) {
+    exports.routes[path] = conf;
+  }
+}

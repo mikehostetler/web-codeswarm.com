@@ -47,9 +47,7 @@
     </div>
 
     <div ng-controller="ErrorCtrl" ng-cloak>
-      <div class="container error alert alert-block alert-danger fade in" ng-show="error.message">
-      {{error.message}}
-      </div><!-- /.container.error -->
+      <div class="container error alert alert-block alert-danger fade in" ng-show="error.message" ng-bind-html="error.message"></div>
     </div>
 
     <div class="container main" ng-view>

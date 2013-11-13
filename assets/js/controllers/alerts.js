@@ -1,7 +1,9 @@
 
 var app = require('../app');
 
-app.controller('AlertsCtrl', ['$scope', '$sce', function ($scope, $sce) {
+app.controller('AlertsCtrl', ['$scope', '$sce', AlertsCtrl]);
+
+function AlertsCtrl($scope, $sce) {
   $scope.message = null;
 
   $scope.error = function (text, digest) {
@@ -60,4 +62,4 @@ app.controller('AlertsCtrl', ['$scope', '$sce', function ($scope, $sce) {
       $scope.$digest();
     }, 1000);
   };
-}]);
+}
