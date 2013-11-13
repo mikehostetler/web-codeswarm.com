@@ -36,7 +36,8 @@ function configureApp($routeProvider, $locationProvider, $httpProvider) {
     }).
     when('/dashboard', {
       templateUrl: '/partials/dashboard/index.html',
-      controller: 'DashboardCtrl'
+      controller: 'DashboardCtrl',
+      reloadOnSearch: false
     }).
     when('/projects', {
       templateUrl: '/partials/projects/index.html',
@@ -46,6 +47,11 @@ function configureApp($routeProvider, $locationProvider, $httpProvider) {
     when('/login', {
       templateUrl: '/partials/login.html',
       controller: 'LoginCtrl'
+    }).
+    when('/account', {
+      templateUrl: '/partials/account.html',
+      controller: 'AccountCtrl',
+      reloadOnSearch: false
     }).
     when('/:owner/:repo/config', {
       templateUrl: '/partials/config/index.html',
