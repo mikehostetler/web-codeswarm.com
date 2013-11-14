@@ -53,6 +53,10 @@ function configureApp($routeProvider, $locationProvider, $httpProvider) {
       templateUrl: '/partials/login.html',
       controller: 'LoginCtrl'
     }).
+    when('/logout', {
+      templateUrl: '/partials/logout.html',
+      controller: 'LogoutCtrl'
+    }).
     when('/account', {
       templateUrl: '/partials/account.html',
       controller: 'AccountCtrl',

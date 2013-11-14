@@ -23,7 +23,7 @@
 
   </head>
 
-  <body ng-app="BrowserSwarmApp">
+  <body ng-app="BrowserSwarmApp" ng-controller="RootCtrl">
 
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
@@ -42,7 +42,17 @@
             <li><a href="/projects">Projects</a></li>
             <li><a href="/account">Account</a></li>
           </ul>
-        </div><!--/.nav-collapse -->
+
+          <p ng-show="currentUser" class='navbar-text pull-right logged-in'>Logged in as {{ currentUser.email }} |  (<a href="/logout">logout</a>)</p>
+
+          <form name="loginform" ng-show="! currentUser" id="navbar-signin-form"
+             class="navbar-form pull-right" ng-controller="LoginCtrl">
+            <input type="email" placeholder="Email" class="input-small" name="email" ng-model="user.email" required>
+            <input type="password" placeholder="Password" class="input-small" name="password" ng-model="user.password" required>
+            <button class="btn" ng-click="login()">Sign In</button>
+          </form>
+
+        </div>
       </div>
     </div>
 
@@ -69,5 +79,10 @@
     <script src="/js/vendor/angular/angular-sanitize.min.js"></script>
     <script src="/js/vendor/bootbox.min.js"></script>
     <script src="/js/browserswarm.js"></script>
+    <script>
+      setTimeout(function() {
+        $('input,select').each(function() { $(this).trigger('input'); });
+      }, 1000);
+    </script>
   </body>
 </html>

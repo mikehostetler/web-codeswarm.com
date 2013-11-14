@@ -7,11 +7,6 @@ function DashboardCtrl($scope, Strider) {
   $scope.phases = Strider.phases;
 
 
-  // TODO: make this more declarative:
-  Strider.Session.get(function(user) {
-    if (user.user) $scope.currentUser = user.user;
-  });
-
   Strider.get('/dashboard', function(resp) {
     $scope.jobs = resp.jobs;
     $scope.availableProviders = resp.availableProviders;

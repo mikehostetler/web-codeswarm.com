@@ -173,6 +173,7 @@ exports.routes = {
 [
   '/',
   '/login',
+  '/logout',
   '/dashboard',
   '/projects',
   '/account',

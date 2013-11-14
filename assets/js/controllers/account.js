@@ -1,11 +1,17 @@
 var App = require('../app');
 
-App.controller('AccountCtrl', ['$scope', '$sce', 'Strider', AccountCtrl]);
+App.controller('AccountCtrl', ['$scope', '$sce', '$location', 'Strider', AccountCtrl]);
 
-function AccountCtrl($scope, $sce, Strider) {
+function AccountCtrl($scope, $sce, $location, Strider) {
+
+  $scope.$on('nouser', function() {
+    $location.path('/');
+  });
+  $scope.getUser();
 
   Strider.get('/api/account', function(reply) {
     $scope.user = reply.user;
+    if (! $scope.user) return;
     $scope.providers = reply.providers;
     $scope.userConfigs = reply.userConfigs;
     $scope.accounts = setupAccounts(reply.user);

@@ -4,13 +4,6 @@ App.controller('ProjectsCtrl', ['$scope', '$sce', 'Strider', ProjectsCtrl]);
 
 function ProjectsCtrl($scope, $sce, Strider) {
 
-  Strider.get('/api/session', function(session) {
-    if (session.user) {
-      $scope.currentUser = session.user;
-      $scope.accounts = session.user.accounts;
-    }
-  });
-
   Strider.get('/api/projects', function(resp) {
 
     $scope.unconfigured = resp.unconfigured;
