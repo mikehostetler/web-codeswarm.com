@@ -7,8 +7,7 @@ function LoginCtrl($scope, $location, $rootScope, Strider) {
   $scope.user = {email: undefined, password: undefined};
 
   $scope.login = function login() {
-    var session = new (Strider.Session)($scope.user);
-    session.$save(function() {
+    Strider.post('/api/session', $scope.user, function() {
       $rootScope.$emit('login');
       $location.path('/dashboard');
     });

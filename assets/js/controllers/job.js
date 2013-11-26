@@ -1,4 +1,5 @@
 var App = require('../app');
+var e   = encodeURIComponent;
 
 App.controller('JobCtrl', ['$scope', '$routeParams', '$sce', '$filter', '$location', '$route', 'Strider', JobCtrl]);
 
@@ -12,12 +13,14 @@ function JobCtrl($scope, $routeParams, $sce, $filter, $location, $route, Strider
 
   var jobid = $routeParams.jobid;
   console.log('jobid:', jobid);
-  var searchOptions = {
+  var options = {
     owner: $routeParams.owner,
     repo:  $routeParams.repo
   };
 
-  Strider.Repo.get(searchOptions, function(repo) {
+  Strider.get('/api/' + e(options.owner) + '/' + e(options.repo) + '\/', gotRepo);
+
+  function gotRepo(repo) {
     $scope.project = repo.project
     if (! jobid) $scope.job  = repo.job;
     $scope.jobs = repo.jobs;
@@ -41,19 +44,19 @@ function JobCtrl($scope, $routeParams, $sce, $filter, $location, $route, Strider
     //     command.merged = $sce.trustAsHtml(command.merged);
     //   })
     // });
-  });
-
-  if (jobid) {
-    Strider.Job.get({
-      owner: $routeParams.owner,
-      repo:  $routeParams.repo,
-      jobid: jobid
-    }, function(job) {
-      $scope.job = job;
-    });
   }
 
-  Strider.StatusBlocks.get(function(statusBlocks) {
+  if (jobid) {
+    Strider.get(
+      '/api/' + e(options.owner) + '/' + e(options.repo) + '/job/' + jobid,
+      gotJob);
+
+    function gotJob(job) {
+      $scope.job = job;
+    };
+  }
+
+  Strider.get('/statusblocks', function(statusBlocks) {
     $scope.statusBlocks = statusBlocks;
     ['runner', 'provider', 'job'].forEach(function(key) {
       fixBlocks(statusBlocks, key);
@@ -62,7 +65,7 @@ function JobCtrl($scope, $routeParams, $sce, $filter, $location, $route, Strider
 
   Strider.connect($scope);
 
-  Strider.Session.get(function(user) {
+  Strider.get('/api/session', function(user) {
     if (user.user) $scope.currentUser = user;
   });
 
@@ -70,7 +73,8 @@ function JobCtrl($scope, $routeParams, $sce, $filter, $location, $route, Strider
 
   $scope.clearCache = function clearCache() {
     $scope.clearingCache = true;
-    Strider.Cache.delete( searchOptions, success);
+
+    Strider.del('/' + e(options.owner) + '/' + e(options.repo) + '/cache', success);
 
     function success() {
       $scope.clearingCache = false;
@@ -141,8 +145,8 @@ function JobCtrl($scope, $routeParams, $sce, $filter, $location, $route, Strider
 
   $scope.selectJob = function (id) {
     $location.path(
-      '/' + encodeURIComponent(searchOptions.owner) +
-      '/' + encodeURIComponent(searchOptions.repo) +
+      '/' + encodeURIComponent(options.owner) +
+      '/' + encodeURIComponent(options.repo) +
       '/job/' + encodeURIComponent(id));
   };
 

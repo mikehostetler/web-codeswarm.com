@@ -1,17 +1,23 @@
 var md5         = require('../lib/md5');
 var App         = require('../app');
 var fixTemplate = require('./config/_fix_template');
+var e           = encodeURIComponent;
 
 App.controller('ConfigCtrl', ['$scope', '$routeParams', '$sce', '$location', 'Strider', ConfigCtrl]);
 
+
 function ConfigCtrl($scope, $routeParams, $sce, $location, Strider) {
 
-  var projectSearchOptions = {
+  var options = {
     owner: $routeParams.owner,
     repo: $routeParams.repo
   };
 
-  Strider.Config.get(projectSearchOptions, function(conf) {
+  Strider.get(
+    '/api/' + e(options.owner) + '/' + e(options.repo) + '/config' ,
+    gotConfig);
+
+  function gotConfig(conf) {
 
     /// Fix and trust remote HTML
 
@@ -73,7 +79,10 @@ function ConfigCtrl($scope, $routeParams, $sce, $location, Strider) {
 
     $scope.clearCache = function () {
       $scope.clearingCache = true;
-      Strider.Cache.delete(projectSearchOptions, success);
+      Strider.del(
+        '/' + e(options.owner) + '/' + e(options.repo) + '/cache',
+        options,
+        success);
 
       function success() {
         $scope.clearingCache = false;
@@ -147,14 +156,12 @@ function ConfigCtrl($scope, $routeParams, $sce, $location, Strider) {
         });
       }
 
-      Strider.Config.Branch.save(
-        {
-          owner: projectSearchOptions.owner,
-          repo:  projectSearchOptions.repo,
-          branch: branch.name },
-        {
-          plugin_order: data},
-        success);
+      setTimeout(function() {
+        Strider.put(
+          '/' + e(options.owner) + '/' + e(options.repo) + '/config/' + e(branch.name) + '/',
+          { plugin_order: data },
+          success);
+      });
 
       function success() {
         $scope.success('Plugin order on branch ' + branch.name + ' saved.');
@@ -227,16 +234,15 @@ function ConfigCtrl($scope, $routeParams, $sce, $location, Strider) {
             deploy_on_green: branch.deploy_on_green,
             runner: branch.runner
           };
-      if (plugins) {
-        data.plugins = branch.plugins;
-      }
-      Strider.Config.Branch.save(
-        {
-          owner: projectSearchOptions.owner,
-          repo:  projectSearchOptions.repo,
-          branch: branch.name },
-        data,
-        success);
+
+      if (plugins) data.plugins = branch.plugins;
+
+      setTimeout(function() {
+        Strider.put(
+          '/' + e(options.owner) + '/' + e(options.repo) + '/config/' + e(branch.name) + '/',
+          data,
+          success);
+      });
 
       function success() {
         $scope.success('General config for branch ' + branch.name + ' saved.');
@@ -246,11 +252,9 @@ function ConfigCtrl($scope, $routeParams, $sce, $location, Strider) {
     $scope.generateKeyPair = function () {
       bootbox.confirm('Really generate a new keypair? This could break things if you have plugins that use the current ones.', function (really) {
         if (!really) return;
-        Strider.Keygen.save(
-          {
-            owner: projectSearchOptions.owner,
-            repo:  projectSearchOptions.repo,
-            branch: $scope.branch.name },
+
+        Strider.post(
+          '/' + e(options.owner) + '/' + e(options.repo) + '/keygen/' + e($scope.branch.name) + '/',
           {},
           success);
 
@@ -282,13 +286,12 @@ function ConfigCtrl($scope, $routeParams, $sce, $location, Strider) {
         return $scope.runnerConfigs[name];
       }
 
-      Strider.Config.Branch.Runner.save(
-        {
-          owner: projectSearchOptions.owner,
-          repo:  projectSearchOptions.repo,
-          branch: 'master' },
-        data,
-        success);
+      setTimeout(function() {
+        Strider.put(
+          '/' + e(options.runner) + '/' + e(options.repo) + '/config/master/runner',
+          data,
+          success);
+      });
 
       function success(data) {
         $scope.success("Runner config saved.");
@@ -301,7 +304,12 @@ function ConfigCtrl($scope, $routeParams, $sce, $location, Strider) {
       if (arguments.length === 0) {
         return $scope.project.provider.config;
       }
-      Strider.Provider.save(projectSearchOptions, data, success);
+      setTimeout(function() {
+        Strider.post(
+          '/' + e(options.owner) + '/' + e(options.repo) + '/provider/',
+          data,
+          success);
+      });
 
       function success() {
         $scope.success("Provider config saved.");
@@ -330,13 +338,9 @@ function ConfigCtrl($scope, $routeParams, $sce, $location, Strider) {
         throw new Error('Plugin not configured: ' + name);
       }
 
-      Strider.Config.Branch.Plugin.save(
-        {
-          owner:  projectSearchOptions.owner,
-          repo:   projectSearchOptions.repo,
-          branch: branch.name,
-          plugin: name
-        },
+      Strider.put(
+        '/' + e(options.owner) + '/' + e(options.repo) + '/config/' +
+          e(branch.name) + '/' + e(name),
         data,
         success);
 
@@ -348,7 +352,7 @@ function ConfigCtrl($scope, $routeParams, $sce, $location, Strider) {
     };
 
     $scope.deleteProject = function () {
-      Strider.Repo.delete(projectSearchOptions, success);
+      Strider.del('/api/' + e(options.owner) + '/' + e(options.repo), success);
 
       function success() {
         $location.path('/');
@@ -356,8 +360,9 @@ function ConfigCtrl($scope, $routeParams, $sce, $location, Strider) {
     };
 
     $scope.startTest = function () {
-      Strider.Start.save(
-        projectSearchOptions,
+
+      Strider.post(
+        '/' + e(options.owner) + '/' + e(options.repo) + '/start',
         {
           branch: $scope.branch.name,
           type: "TEST_ONLY",
@@ -370,8 +375,8 @@ function ConfigCtrl($scope, $routeParams, $sce, $location, Strider) {
     };
 
     $scope.startDeploy = function () {
-      Strider.Start.save(
-        projectSearchOptions,
+      Strider.post(
+        '/' + e(options.owner) + '/' + e(options.repo) + '/start',
         {
           branch: $scope.branch.name,
           type: "TEST_AND_DEPLOY",
@@ -385,11 +390,9 @@ function ConfigCtrl($scope, $routeParams, $sce, $location, Strider) {
 
     $scope.saveProject = function () {
       setTimeout(function() {
-        Strider.RegularConfig.save(
-          projectSearchOptions,
-          {
-            public: $scope.project.public
-          },
+        Strider.put(
+          '/' + e(options.owner) + '/' + e(options.repo) + '/config',
+          { public: $scope.project.public },
           success);
       });
 
@@ -399,5 +402,5 @@ function ConfigCtrl($scope, $routeParams, $sce, $location, Strider) {
       }
     };
 
-  });
+  };
 }

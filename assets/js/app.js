@@ -3,13 +3,13 @@ var Strider = require('./strider');
 var App =
 exports =
 module.exports =
-angular.module('BrowserSwarmApp', ['ngRoute', 'ngResource', 'ngSanitize']);
+angular.module('BrowserSwarmApp', ['ngRoute', 'ngSanitize']);
 
 /// App Configuration
 
 App.
   config(['$routeProvider', '$locationProvider', '$httpProvider', configureApp]).
-  factory('Strider', ['$resource', '$http', Strider]);
+  factory('Strider', ['$http', Strider]);
 
 function configureApp($routeProvider, $locationProvider, $httpProvider) {
 
@@ -27,6 +27,7 @@ function configureApp($routeProvider, $locationProvider, $httpProvider) {
   /// Enable hashbang-less routes
 
   $locationProvider.html5Mode(true);
+
 
   /// Routes
 

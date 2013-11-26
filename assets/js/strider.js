@@ -3,15 +3,15 @@ var jobStore = JobStore();
 
 exports = module.exports = BuildStrider;
 
-function BuildStrider($resource, $http) {
-  return new Strider($resource, $http);
+function BuildStrider($http) {
+  return new Strider($http);
 }
 
 
 var socket;
 var scopes = [];
 
-function Strider($resource, $http, opts) {
+function Strider($http, opts) {
   if (! opts) opts = {};
   if (typeof opts == 'string')
     opts = { url: opts };
@@ -19,49 +19,48 @@ function Strider($resource, $http, opts) {
   this.url = opts.url || '//localhost:3000';
 
   /// RESTful API setup
-  var apiBase  = this.url + '/api';
-  var loginURL = this.url + '/login';
-  this.Session = $resource(apiBase + '/session/');
-  this.Repo    = $resource(apiBase + '/:owner/:repo/');
-  this.Job     = $resource(apiBase + '/:owner/:repo/job/:jobid');
-  this.Config  = $resource(apiBase + '/:owner/:repo/config', {}, {
-    get: {
-      method: 'GET'
-    },
-    save: {
-      method: 'PUT'
-    }
-  });
-  this.RegularConfig  = $resource(this.url + '/:owner/:repo/config', {}, {
-    save: {
-      method: 'PUT'
-    }
-  });
-  this.Config.Branch = $resource(this.url + '/:owner/:repo/config/:branch\\/', {}, {
-    save: {
-      method: 'PUT'
-    }
-  });
-  this.Config.Branch.Runner = $resource(this.url + '/:owner/:repo/config/:branch/runner', {}, {
-    save: {
-      method: 'PUT'
-    }
-  });
-  this.Config.Branch.Plugin  = $resource(this.url + '/:owner/:repo/config/:branch/:plugin', {}, {
-    save: {
-      method: 'PUT'
-    }
-  });
-  this.Provider = $resource(this.url + '/:owner/:repo/provider');
-  this.Cache  = $resource(this.url + '/:owner/:repo/cache');
-  this.Start = $resource(this.url + '/:owner/:repo/start');
-  this.Keygen = $resource(this.url + '/:owner/:repo/keygen/:branch\\/');
+  // var apiBase  = this.url + '/api';
+  // this.Session = $resource(apiBase + '/session/');
+  // this.Repo    = $resource(apiBase + '/:owner/:repo/');
+  // this.Job     = $resource(apiBase + '/:owner/:repo/job/:jobid');
+  // this.Config  = $resource(apiBase + '/:owner/:repo/config', {}, {
+  //   get: {
+  //     method: 'GET'
+  //   },
+  //   save: {
+  //     method: 'PUT'
+  //   }
+  // });
+  // this.RegularConfig  = $resource(this.url + '/:owner/:repo/config', {}, {
+  //   save: {
+  //     method: 'PUT'
+  //   }
+  // });
+  // this.Config.Branch = $resource(this.url + '/:owner/:repo/config/:branch\\/', {}, {
+  //   save: {
+  //     method: 'PUT'
+  //   }
+  // });
+  // this.Config.Branch.Runner = $resource(this.url + '/:owner/:repo/config/:branch/runner', {}, {
+  //   save: {
+  //     method: 'PUT'
+  //   }
+  // });
+  // this.Config.Branch.Plugin  = $resource(this.url + '/:owner/:repo/config/:branch/:plugin', {}, {
+  //   save: {
+  //     method: 'PUT'
+  //   }
+  // });
+  // this.Provider = $resource(this.url + '/:owner/:repo/provider');
+  // this.Cache  = $resource(this.url + '/:owner/:repo/cache');
+  // this.Start = $resource(this.url + '/:owner/:repo/start');
+  // this.Keygen = $resource(this.url + '/:owner/:repo/keygen/:branch\\/');
 
-  this.StatusBlocks = $resource(this.url + '/statusBlocks', {}, {
-    get: {
-      method: 'GET'
-    }
-  });
+  // this.StatusBlocks = $resource(this.url + '/statusBlocks', {}, {
+  //   get: {
+  //     method: 'GET'
+  //   }
+  // });
 
   this.phases  = JobStore.phases;
 
