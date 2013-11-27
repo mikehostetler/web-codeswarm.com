@@ -12,7 +12,7 @@ function JobCtrl($scope, $routeParams, $sce, $filter, $location, $route, Strider
   $scope.phases = Strider.phases;
   $scope.page = 'build';
 
-  var jobId = $routeParams.jobId;
+  var jobId = $routeParams.jobid;
   var options = {
     owner: $routeParams.owner,
     repo:  $routeParams.repo

@@ -21,9 +21,6 @@ var statusHandlers = {
     this.status = 'errored';
   },
   'canceled': 'errored',
-  'phase.done': function (data) {
-    this.phase = PHASES.indexOf(data.phase) + 1;
-  },
   // this is just so we'll trigger the "unknown job" lookup sooner on the dashboard
   'warning': function (warning) {
     if (!this.warnings) {
@@ -65,7 +62,11 @@ var statusHandlers = {
     }
     if (data.phase === 'test') this.test_status = data.code;
     if (data.phase === 'deploy') this.deploy_status = data.code;
-    if (!data.next || !this.phases[data.next]) return;
+    if (!data.next || !this.phases[data.next]) {
+      if (this.test_status == 0) this.status = 'passed';
+      else this.status = 'failed';
+      return;
+    }
     this.phase = data.next;
     this.phases[data.next].started = data.time;
   },
@@ -86,7 +87,7 @@ var statusHandlers = {
   },
   'command.done': function (data) {
     var phase = this.phases[this.phase]
-      , command = phase.commands[phase.commands.length - 1];
+      , command = ensureCommand(this.phases[this.phase]);
     command.finished = data.time;
     command.duration = data.elapsed;
     command.exitCode = data.exitCode;
