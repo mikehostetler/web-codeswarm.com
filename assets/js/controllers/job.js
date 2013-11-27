@@ -29,15 +29,6 @@ function JobCtrl($scope, $routeParams, $sce, $filter, $location, $route, Strider
     $scope.jobs = repo.jobs;
 
     Strider.connect($scope, connected);
-
-
-    // Object.keys($scope.job.phases).forEach(function(phaseKey) {
-    //   var phase = $scope.job.phases[phaseKey];
-    //   Object.keys(phase.commands).forEach(function(commandKey) {
-    //     var command = phase.commands[commandKey];
-    //     command.merged = $sce.trustAsHtml(command.merged);
-    //   })
-    // });
   }
 
   function connected() {
@@ -105,48 +96,6 @@ function JobCtrl($scope, $routeParams, $sce, $filter, $location, $route, Strider
     }
   }
 
-  // var lastRoute;
-
-  // $scope.$on('$locationChangeSuccess', function(event) {
-  //   if (window.location.pathname.match(/\/config$/)) {
-  //     window.location = window.location;
-  //     return;
-  //   }
-  //   params = $routeParams;
-  //   if (!params.id) params.id = $scope.jobs[0]._id;
-  //   // don't refresh the page
-  //   $route.current = lastRoute;
-  //   if (jobId !== params.id) {
-  //     jobId = params.id;
-  //     var cached = jobman.get(jobId, function (err, job, cached) {
-  //       if (job.phases.environment) {
-  //         job.phases.environment.collapsed = true;
-  //       }
-  //       if (job.phases.prepare) {
-  //         job.phases.prepare.collapsed = true;
-  //       }
-  //       if (job.phases.cleanup) {
-  //         job.phases.cleanup.collapsed = true;
-  //       }
-  //       $scope.job = job;
-  //       if ($scope.job.phases.test.commands.length) {
-  //         $scope.job.phases.environment.collapsed = true;
-  //         $scope.job.phases.prepare.collapsed = true;
-  //         $scope.job.phases.cleanup.collapsed = true;
-  //       }
-  //       if (!cached) $scope.$digest();
-  //     });
-  //     if (!cached) {
-  //       for (var i=0; i<$scope.jobs.length; i++) {
-  //         if ($scope.jobs[i]._id === jobId) {
-  //           $scope.job = $scope.jobs[i];
-  //           break;
-  //         }
-  //       }
-  //     }
-  //   }
-  // });
-
   $scope.triggers = {
     commit: {
       icon: 'code-fork',
@@ -178,14 +127,6 @@ function JobCtrl($scope, $routeParams, $sce, $filter, $location, $route, Strider
   });
 
   $scope.$watch('job.std.merged_latest', function (value) {
-    /* Tracking isn't quite working right
-    if ($scope.job.status === 'running') {
-      height = outputConsole.getBoundingClientRect().height;
-      tracking = height + outputConsole.scrollTop > outputConsole.scrollHeight - 50;
-      // console.log(tracking, height, outputConsole.scrollTop, outputConsole.scrollHeight);
-      if (!tracking) return;
-    }
-    */
     var ansiFilter = $filter('ansi')
     $('.job-output').last().append(ansiFilter(value))
     outputConsole.scrollTop = outputConsole.scrollHeight;
@@ -203,6 +144,7 @@ function JobCtrl($scope, $routeParams, $sce, $filter, $location, $route, Strider
       status: 'submitted'
     };
   };
+
   $scope.startTest = function (job) {
     $('.tooltip').hide();
     Strider.deploy(job.project);
@@ -256,30 +198,4 @@ function updateFavicon(value) {
     }
     setFavicon(value);
   }
-}
-
-function buildSwitcher($scope) {
-  function switchBuilds(evt) {
-    var dy = {40: 1, 38: -1}[evt.keyCode]
-      , id = $scope.job._id
-      , idx;
-    if (!dy) return;
-    for (var i=0; i<$scope.jobs.length; i++) {
-      if ($scope.jobs[i]._id === id) {
-        idx = i;
-        break;
-      }
-    }
-    if (idx === -1) {
-      return window.location = window.location
-    }
-    idx += dy;
-    if (idx < 0 || idx >= $scope.jobs.length) {
-      return;
-    }
-    evt.preventDefault();
-    $scope.selectJob($scope.jobs[idx]._id);
-    $scope.$root.$digest();
-  }
-  document.addEventListener('keydown', switchBuilds);
 }

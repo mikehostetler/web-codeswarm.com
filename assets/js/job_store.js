@@ -63,7 +63,7 @@ var statusHandlers = {
     if (data.phase === 'test') this.test_status = data.code;
     if (data.phase === 'deploy') this.deploy_status = data.code;
     if (!data.next || !this.phases[data.next]) {
-      if (this.test_status == 0) this.status = 'passed';
+      if (!this.test_status && ! this.deploy_status) this.status = 'passed';
       else this.status = 'failed';
       return;
     }
