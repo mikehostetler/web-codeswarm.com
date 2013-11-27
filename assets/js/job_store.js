@@ -1,4 +1,6 @@
-var extend = require('xtend');
+var EventEmitter = require('events').EventEmitter;
+var inherits     = require('util').inherits;
+var extend       = require('xtend');
 
 exports = module.exports = createJobStore;
 function createJobStore() {
@@ -55,7 +57,6 @@ var statusHandlers = {
   },
 
   'phase.done': function (data) {
-    if (! this.phases) return;
     this.phases[data.phase].finished = data.time;
     this.phases[data.phase].duration = data.elapsed
     this.phases[data.phase].exitCode = data.code;
@@ -69,7 +70,6 @@ var statusHandlers = {
     this.phases[data.next].started = data.time;
   },
   'command.comment': function (data) {
-    if (! this.phases) return;
     var phase = this.phases[this.phase]
       , command = extend({}, SKELS.command);
     command.command = data.comment;
@@ -79,14 +79,12 @@ var statusHandlers = {
     phase.commands.push(command);
   },
   'command.start': function (data) {
-    if (! this.phases) return;
     var phase = this.phases[this.phase]
       , command = extend({}, SKELS.command, data);
     command.started = data.time;
     phase.commands.push(command);
   },
   'command.done': function (data) {
-    if (! this.phases) return;
     var phase = this.phases[this.phase]
       , command = phase.commands[phase.commands.length - 1];
     command.finished = data.time;
@@ -95,7 +93,6 @@ var statusHandlers = {
     command.merged = command._merged;
   },
   'stdout': function (text) {
-    if (! this.phases) return;
     var command = ensureCommand(this.phases[this.phase]);
     command.out += text;
     command._merged += text;
@@ -104,7 +101,6 @@ var statusHandlers = {
     this.std.merged_latest = text;
   },
   'stderr': function (text) {
-    if (! this.phases) return;
     var command = ensureCommand(this.phases[this.phase]);
     command.err += text;
     command._merged += text;
@@ -115,20 +111,32 @@ var statusHandlers = {
 }
 
 function JobStore() {
-  this.jobs = {
-    // dashboard: dashboard.bind(this),
+  var store = this;
+  store.jobs = {
     public: [],
-    yours: [],
-    limbo: []
+    yours: []
   };
+
+  setInterval(function() {
+    console.log('STORE JOBS:', store.jobs);
+  }, 5000);
 }
+
+inherits(JobStore, EventEmitter);
+
 var JS = JobStore.prototype;
 
-function dashboard(cb) {
+
+/// Dashboard Data
+
+JS.dashboard = function dashboard(cb) {
   var self = this;
   this.socket.emit('dashboard:jobs', function(jobs) {
     self.jobs.yours = jobs.yours;
     self.jobs.public = jobs.public;
+    self.jobs.yours.forEach(fixJob);
+    self.jobs.public.forEach(fixJob);
+    if (cb) cb();
     self.changed();
   });
 }
@@ -154,6 +162,8 @@ JS.connect = function connect(socket, changeCallback) {
 JS.setJobs = function setJobs(jobs) {
   this.jobs.yours = jobs.yours;
   this.jobs.public = jobs.public;
+  this.jobs.yours.forEach(fixJob);
+  this.jobs.public.forEach(fixJob);
 };
 
 
@@ -166,6 +176,7 @@ JS.update = function update(event, args, access, dontchange) {
 
   if (!job) return; // this.unknown(id, event, args, access)
   if (!handler) return;
+
   if ('string' === typeof handler) {
     job.status = handler;
   } else {
@@ -185,26 +196,10 @@ JS.newJob = function newJob(job, access) {
     , found = -1
     , old;
 
-  if (! jobs) return;
-
-  function search() {
-    for (var i=0; i<jobs.length; i++) {
-      if (jobs[i].project.name === job.project.name) {
-        found = i;
-        break;
-      }
-    }
-  }
-
-  search();
-  if (found < 0) {
-    /// try limbo
-    jobs = this.jobs.limbo;
-    search();
-    if (found) {
-      jobs = this.jobs[access];
-      jobs.unshift(this.jobs.limbo[found]);
-      this.jobs.limbo.splice(found, 1);
+  for (var i=0; i<jobs.length; i++) {
+    if (jobs[i] && jobs[i].project.name === job.project.name) {
+      found = i;
+      break;
     }
   }
 
@@ -212,13 +207,12 @@ JS.newJob = function newJob(job, access) {
     old = jobs.splice(found, 1)[0];
     job.project.prev = old.project.prev;
   }
-  // if (job.phases) {
-  //   // get rid of extra data - we don't need it.
-  //   // note: this won't be passed up anyway for public projects
-  //   cleanJob(job);
-  // }
-  //job.phase = 'environment';
+
   jobs.unshift(job);
+
+  fixJob(job);
+
+  this.emit('newjob', job);
   this.changed();
 };
 
@@ -226,17 +220,7 @@ JS.newJob = function newJob(job, access) {
 /// job - find a job by id and access level
 
 JS.job = function job(id, access) {
-  var jobs = this.jobs[access];
-  var job = search(id, jobs);
-  // if not found, try limbo
-  if (! job){
-    job = search(id, this.jobs.limbo);
-    if (job) {
-      jobs.unshift(job);
-      this.jobs.limbo.splice(this.jobs.limbo.indexOf(job), 1);
-    }
-  }
-  return job;
+  return search(id, this.jobs[access]);
 };
 
 function search(id, jobs) {
@@ -257,10 +241,19 @@ JS.changed = function changed() {
 
 /// load — loads a job
 
-JS.load = function load(jobId, cb) {
+JS.load = function load(jobId, project, cb) {
   var self = this;
+
+  var destination = project.access_level > 1 ? 'yours' : 'public';
+
   this.socket.emit('build:job', jobId, function(job) {
-    self.newJob(job, 'limbo');
+    /// HACK: the socket emits a job that is missing the `project`
+    /// structure (instead the `project` value is a string)
+    /// Attach a proper project structure to it.
+    job.project = project;
+
+    /// New job has unknown access?
+    self.newJob(job, destination);
     cb(job);
     self.changed();
   });
@@ -268,9 +261,65 @@ JS.load = function load(jobId, cb) {
 
 function ensureCommand(phase) {
   var command = phase.commands[phase.commands.length - 1];
-  if (!command || typeof(command.finished) !== 'undefined') {
+  if (!command || typeof command.finished != 'undefined') {
     command = extend({}, SKELS.command);
     phase.commands.push(command);
   }
   return command;
+}
+
+
+/// HACK: Fix job structure
+
+function fixJob(job) {
+
+  if (! job.phases) {
+    job.phases = {};
+    PHASES.forEach(function(phase) {
+      job.phases[phase] = {
+        commands: []
+      };
+    });
+  }
+
+  if (! job.phase) job.phase = PHASES[0];
+
+  if (! job.std) job.std = extend({}, SKELS.job.std);
+}
+
+
+var SKELS = {
+  job: {
+    id: null,
+    data: null,
+    phases: {},
+    phase: PHASES[0],
+    queued: null,
+    started: null,
+    finished: null,
+    test_status: null,
+    deploy_status: null,
+    plugin_data: {},
+    warnings: [],
+    std: {
+      out: '',
+      err: '',
+      merged: '',
+      merged_latest: ''
+    }
+  },
+  command: {
+    out: '',
+    err: '',
+    merged: '',
+    _merged: '',
+    started: null,
+    command: '',
+    plugin: ''
+  },
+  phase: {
+    finished: null,
+    exitCode: null,
+    commands: []
+  }
 }

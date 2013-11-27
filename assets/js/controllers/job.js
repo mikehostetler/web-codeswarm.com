@@ -6,24 +6,57 @@ App.controller('JobCtrl', ['$scope', '$routeParams', '$sce', '$filter', '$locati
 function JobCtrl($scope, $routeParams, $sce, $filter, $location, $route, Strider) {
 
 
+  // TODO: remove this DOM stuff from the controller
   var outputConsole = document.querySelector('.console-output');
 
   $scope.phases = Strider.phases;
   $scope.page = 'build';
 
-  var jobid = $routeParams.jobid;
-  console.log('jobid:', jobid);
+  var jobId = $routeParams.jobId;
   var options = {
     owner: $routeParams.owner,
     repo:  $routeParams.repo
   };
+  var projectName = e(options.owner) + '/' + e(options.repo);
 
-  Strider.get('/api/' + e(options.owner) + '/' + e(options.repo) + '\/', gotRepo);
+  Strider.get('/api/' + projectName + '\/', gotRepo);
 
   function gotRepo(repo) {
-    $scope.project = repo.project
-    if (! jobid) $scope.job  = repo.job;
+    $scope.project = repo.project;
+    if (! jobId) jobId = repo && repo.job && repo.job._id;
+    if (! jobId) return;
+
     $scope.jobs = repo.jobs;
+
+    Strider.connect($scope, connected);
+
+
+    // Object.keys($scope.job.phases).forEach(function(phaseKey) {
+    //   var phase = $scope.job.phases[phaseKey];
+    //   Object.keys(phase.commands).forEach(function(commandKey) {
+    //     var command = phase.commands[commandKey];
+    //     command.merged = $sce.trustAsHtml(command.merged);
+    //   })
+    // });
+  }
+
+  function connected() {
+    Strider.job(jobId, $scope.project, loadedJob);
+  }
+
+  function loadedJob(job) {
+    $scope.job = job;
+
+    /// - If there is a job id on the URL redirect the user
+    ///   to the new job URL.
+    /// - Do not redirect the user to the new job when there
+    ///   is a job id on the URL.
+    if (! $routeParams.jobId) {
+      Strider.store.on('newjob', onNewJob);
+      $scope.$on('$destroy', function() {
+        Strider.store.removeListener('newjob', onNewJob);
+      });
+    }
 
     if ($scope.job && $scope.job.phases.test.commands.length) {
       if ($scope.job.phases.environment) {
@@ -36,25 +69,17 @@ function JobCtrl($scope, $routeParams, $sce, $filter, $location, $route, Strider
         $scope.job.phases.cleanup.collapsed = true;
       }
     }
-
-    // Object.keys($scope.job.phases).forEach(function(phaseKey) {
-    //   var phase = $scope.job.phases[phaseKey];
-    //   Object.keys(phase.commands).forEach(function(commandKey) {
-    //     var command = phase.commands[commandKey];
-    //     command.merged = $sce.trustAsHtml(command.merged);
-    //   })
-    // });
   }
 
-  if (jobid) {
-    Strider.get(
-      '/api/' + e(options.owner) + '/' + e(options.repo) + '/job/' + jobid,
-      gotJob);
 
-    function gotJob(job) {
-      $scope.job = job;
-    };
+  function onNewJob(job) {
+    if (job.project.name == projectName) {
+      var newPath = '/' + projectName + '/job/' + e(job._id);
+      $location.path(newPath);
+      $scope.$apply();
+    }
   }
+
 
   Strider.get('/statusblocks', function(statusBlocks) {
     $scope.statusBlocks = statusBlocks;
@@ -62,8 +87,6 @@ function JobCtrl($scope, $routeParams, $sce, $filter, $location, $route, Strider
       fixBlocks(statusBlocks, key);
     });
   });
-
-  Strider.connect($scope);
 
   Strider.get('/api/session', function(user) {
     if (user.user) $scope.currentUser = user;
@@ -93,9 +116,9 @@ function JobCtrl($scope, $routeParams, $sce, $filter, $location, $route, Strider
   //   if (!params.id) params.id = $scope.jobs[0]._id;
   //   // don't refresh the page
   //   $route.current = lastRoute;
-  //   if (jobid !== params.id) {
-  //     jobid = params.id;
-  //     var cached = jobman.get(jobid, function (err, job, cached) {
+  //   if (jobId !== params.id) {
+  //     jobId = params.id;
+  //     var cached = jobman.get(jobId, function (err, job, cached) {
   //       if (job.phases.environment) {
   //         job.phases.environment.collapsed = true;
   //       }
@@ -115,7 +138,7 @@ function JobCtrl($scope, $routeParams, $sce, $filter, $location, $route, Strider
   //     });
   //     if (!cached) {
   //       for (var i=0; i<$scope.jobs.length; i++) {
-  //         if ($scope.jobs[i]._id === jobid) {
+  //         if ($scope.jobs[i]._id === jobId) {
   //           $scope.job = $scope.jobs[i];
   //           break;
   //         }
@@ -248,7 +271,6 @@ function buildSwitcher($scope) {
       }
     }
     if (idx === -1) {
-      console.log('Failed to find job.');
       return window.location = window.location
     }
     idx += dy;

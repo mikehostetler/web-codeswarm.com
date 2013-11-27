@@ -18,51 +18,9 @@ function Strider($http, opts) {
 
   this.url = opts.url || '//localhost:3000';
 
-  /// RESTful API setup
-  // var apiBase  = this.url + '/api';
-  // this.Session = $resource(apiBase + '/session/');
-  // this.Repo    = $resource(apiBase + '/:owner/:repo/');
-  // this.Job     = $resource(apiBase + '/:owner/:repo/job/:jobid');
-  // this.Config  = $resource(apiBase + '/:owner/:repo/config', {}, {
-  //   get: {
-  //     method: 'GET'
-  //   },
-  //   save: {
-  //     method: 'PUT'
-  //   }
-  // });
-  // this.RegularConfig  = $resource(this.url + '/:owner/:repo/config', {}, {
-  //   save: {
-  //     method: 'PUT'
-  //   }
-  // });
-  // this.Config.Branch = $resource(this.url + '/:owner/:repo/config/:branch\\/', {}, {
-  //   save: {
-  //     method: 'PUT'
-  //   }
-  // });
-  // this.Config.Branch.Runner = $resource(this.url + '/:owner/:repo/config/:branch/runner', {}, {
-  //   save: {
-  //     method: 'PUT'
-  //   }
-  // });
-  // this.Config.Branch.Plugin  = $resource(this.url + '/:owner/:repo/config/:branch/:plugin', {}, {
-  //   save: {
-  //     method: 'PUT'
-  //   }
-  // });
-  // this.Provider = $resource(this.url + '/:owner/:repo/provider');
-  // this.Cache  = $resource(this.url + '/:owner/:repo/cache');
-  // this.Start = $resource(this.url + '/:owner/:repo/start');
-  // this.Keygen = $resource(this.url + '/:owner/:repo/keygen/:branch\\/');
-
-  // this.StatusBlocks = $resource(this.url + '/statusBlocks', {}, {
-  //   get: {
-  //     method: 'GET'
-  //   }
-  // });
-
   this.phases  = JobStore.phases;
+
+  this.store = jobStore;
 
   this.$http = $http;
 }
@@ -81,18 +39,27 @@ function changed() {
 
 //// ---- Strider prototype functions
 
-/// connect
+/// connect websocket
 
-S.connect = function(scope, jobs) {
+S.connect = function(scope, jobs, cb) {
+  if (typeof jobs == 'function') {
+    cb = jobs;
+    jobs = undefined;
+  }
+
   if (! socket) {
-    socket = io.connect(this.url);
-
-    /// connects job store to new socket
-    if (jobs) jobStore.setJobs(jobs);
-
+    this.socket = socket = io.connect(this.url);
     jobStore.connect(socket, changed);
   }
-  this.socket = socket;
+
+  /// connects job store to new socket
+  if (jobs) {
+    jobStore.setJobs(jobs);
+    if (cb) cb();
+  } else {
+    jobStore.connect(socket, changed);
+    this.store.dashboard(cb);
+  }
 
   scopes.push(scope);
   scope.$on('$destroy', function() {
@@ -120,8 +87,8 @@ S.test = function test(project) {
 
 /// job
 
-S.job = function job(jobId, cb) {
-  jobStore.load(jobId, cb);
+S.job = function job(jobId, project, cb) {
+  jobStore.load(jobId, project, cb);
 };
 
 
