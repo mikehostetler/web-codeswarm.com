@@ -65,7 +65,7 @@ function ProjectsCtrl($scope, $sce, Strider) {
 
       function success() {
         repo.adding = false;
-        $scope.success('Test started for ' + repo.project.name + '. <a href="/' + repo.project.name + '/" target="_blank">Click to watch it run</a>');
+        $scope.success('Test started for ' + repo.project.name + '. <a href="/' + repo.project.name + '" target="_blank">Click to watch it run</a>');
       }
     };
   });
