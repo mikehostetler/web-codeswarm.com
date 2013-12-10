@@ -5,6 +5,8 @@
 
 This project is set up to use Vagrant to set up a Virtual Machine to work from.  
 
+NOTE: You will need to also set up and install the BrowserSwarm repository for this project to work.
+
 ### Set up Vagrant (Only do this once)
 
 1. Download and install VirtualBox by [clicking here](https://www.virtualbox.org/wiki/Downloads)
