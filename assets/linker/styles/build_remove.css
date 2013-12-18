@@ -190,3 +190,7 @@ body.job_view footer {
     position: static;
   }
 }
+
+#list-of-builds {
+  font-size: 80%;
+}
