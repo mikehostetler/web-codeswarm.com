@@ -36,9 +36,23 @@ function run() {
   }
   executing = true;
   var args = ['public/js/app.js'];
-  var controllers = fs.readdirSync(__dirname + '/public/js/controllers').filter(isJavascript).map(prefix(__dirname + '/public/js/controllers/'));
-  controllers = controllers.concat(fs.readdirSync(__dirname + '/public/js/controllers/config').filter(isJavascript).map(prefix(__dirname + '/public/js/controllers/config/')));
-  args = args.concat(controllers);
+
+  /// add controllers
+  args = args.concat(
+    fs.readdirSync(__dirname + '/public/js/controllers').
+    map(prefix(__dirname + '/public/js/controllers/')).
+    concat(
+      fs.readdirSync(__dirname + '/public/js/controllers/config').
+      map(prefix(__dirname + '/public/js/controllers/config/'))).
+    filter(isJavascript));
+
+  /// add filters
+  args = args.concat(
+    fs.readdirSync(__dirname + '/public/js/filters').
+    filter(isJavascript).
+    map(prefix(__dirname + '/public/js/filters/')));
+
+  /// finalize args
   args = args.concat(['-o', 'public/js/browserswarm.js']);
   console.log('browserify %s'.yellow, args.join(' '));
   var child = spawn(__dirname + '/node_modules/.bin/browserify', args, {stdio: 'inherit'});
