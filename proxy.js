@@ -9,6 +9,6 @@ var proxyConf = {
   port: 3000
 };
 
-function proxyRoute() {
+function proxyRoute(req, res) {
   proxy.proxyRequest(req, res, proxyConf);
 }

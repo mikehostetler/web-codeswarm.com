@@ -1,4 +1,5 @@
 var static = require('node-static');
+var proxy  = require('./proxy');
 
 var server =
 exports =
@@ -8,6 +9,11 @@ require('http').createServer(handleRequest);
 var fileServer = new static.Server('./public');
 
 function handleRequest(req, res) {
+
+
+  // proxy github auth to strider
+  if (req.url == '/auth/github') return proxy(req, res);
+
   fileServer.serve(req, res, triedServingStatic);
 
   function triedServingStatic(err) {

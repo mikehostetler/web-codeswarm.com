@@ -4,7 +4,9 @@
   "version": "0.0.1",
   "description": "BrowserSwarm Web Interface",
   "dependencies": {
-    "node-static": "~0.7.2"
+    "node-static": "~0.7.2",
+    "http-proxy": "~0.10.4",
+    "xtend": "~2.1.2"
   },
   "scripts": {
     "start": "node index.js"
