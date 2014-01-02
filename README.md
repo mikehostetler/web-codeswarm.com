@@ -3,7 +3,7 @@
 
 ## Developing with Vagrant
 
-This project is set up to use Vagrant to set up a Virtual Machine to work from.  
+This project is set up to use Vagrant to set up a Virtual Machine to work from.
 
 NOTE: You will need to also set up and install the BrowserSwarm repository for this project to work.
 
@@ -25,3 +25,22 @@ NOTE: You will need to also set up and install the BrowserSwarm repository for t
 5. `sails lift` (Sails.js command to start the Sails server)
 6. Navigate to http://localhost:1337
   The network port from the Virtual Machine is forwarded to your localhost
+
+## Browser debugging
+
+Browser debugging messages use [bows](https://github.com/latentflip/bows).
+
+For debugging messages to show up on browser console, do in console:
+
+```javascript
+localStorage.debug = true
+```
+
+To add debugging messages to any part of the code do:
+
+```javascript
+var log = require('bows')('my_module_name');
+
+log('this is a message to be logged');
+```
+

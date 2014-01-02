@@ -1,4 +1,104 @@
 ;(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function() {
+  function checkColorSupport() {
+    var chrome = !!window.chrome,
+        firefox = /firefox/i.test(navigator.userAgent),
+        firebug = firefox && !!window.console.exception;
+
+    return chrome || firebug;
+  }
+
+  var inNode = typeof window === 'undefined',
+      ls = !inNode && window.localStorage,
+      debug = ls.debug,
+      logger = require('andlog'),
+      hue = 0,
+      padLength = 15,
+      noop = function() {},
+      colorsSupported = ls.debugColors || checkColorSupport(),
+      yieldColor,
+      bows,
+      debugRegex;
+
+  yieldColor = function() {
+    var goldenRatio = 0.618033988749895;
+    hue += goldenRatio;
+    hue = hue % 1;
+    return hue * 360;
+  };
+
+  debugRegex = debug && debug[0]==='/' && new RegExp(debug.substring(1,debug.length-1));
+
+  bows = function(str) {
+    var msg, colorString, logfn;
+    msg = (str.slice(0, padLength));
+    msg += Array(padLength + 3 - msg.length).join(' ') + '|';
+
+    if (debugRegex && !str.match(debugRegex)) return noop;
+
+    if (colorsSupported) {
+      var color = yieldColor();
+      msg = "%c" + msg;
+      colorString = "color: hsl(" + (color) + ",99%,40%); font-weight: bold";
+
+      logfn = logger.log.bind(logger, msg, colorString);
+      ['log', 'debug', 'warn', 'error', 'info'].forEach(function (f) {
+        logfn[f] = logger[f].bind(logger, msg, colorString);
+      });
+    } else {
+      logfn = logger.log.bind(logger, msg);
+      ['log', 'debug', 'warn', 'error', 'info'].forEach(function (f) {
+        logfn[f] = logger[f].bind(logger, msg);
+      });
+    }
+
+    return logfn;
+  };
+
+  bows.config = function(config) {
+    if (config.padLength) {
+      this.padLength = config.padLength;
+    }
+  };
+
+  if (typeof module !== 'undefined') {
+    module.exports = bows;
+  } else {
+    window.bows = bows;
+  }
+}).call();
+
+},{"andlog":2}],2:[function(require,module,exports){
+// follow @HenrikJoreteg and @andyet if you like this ;)
+(function () {
+    var inNode = typeof window === 'undefined',
+        ls = !inNode && window.localStorage,
+        out = {};
+
+    if (inNode) {
+        module.exports = console;
+        return;
+    }
+
+    if (ls && ls.debug && window.console) {
+        out = window.console;
+    } else {
+        var methods = "assert,count,debug,dir,dirxml,error,exception,group,groupCollapsed,groupEnd,info,log,markTimeline,profile,profileEnd,time,timeEnd,trace,warn".split(","),
+            l = methods.length,
+            fn = function () {};
+
+        while (l--) {
+            out[methods[l]] = fn;
+        }
+    }
+    if (typeof exports !== 'undefined') {
+        module.exports = out;
+    } else {
+        window.console = out;
+    }
+})();
+
+},{}],3:[function(require,module,exports){
 
 
 //
@@ -216,7 +316,7 @@ if (typeof Object.getOwnPropertyDescriptor === 'function') {
   exports.getOwnPropertyDescriptor = valueObject;
 }
 
-},{}],2:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -497,7 +597,7 @@ EventEmitter.listenerCount = function(emitter, type) {
     ret = emitter._events[type].length;
   return ret;
 };
-},{"util":3}],3:[function(require,module,exports){
+},{"util":5}],5:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -1042,7 +1142,7 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-},{"_shims":1}],4:[function(require,module,exports){
+},{"_shims":3}],6:[function(require,module,exports){
 module.exports = hasKeys
 
 function hasKeys(source) {
@@ -1051,7 +1151,7 @@ function hasKeys(source) {
         typeof source === "function")
 }
 
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 var Keys = require("object-keys")
 var hasKeys = require("./has-keys")
 
@@ -1078,7 +1178,7 @@ function extend() {
     return target
 }
 
-},{"./has-keys":4,"object-keys":7}],6:[function(require,module,exports){
+},{"./has-keys":6,"object-keys":9}],8:[function(require,module,exports){
 var hasOwn = Object.prototype.hasOwnProperty;
 var toString = Object.prototype.toString;
 
@@ -1120,11 +1220,11 @@ module.exports = function forEach(obj, fn) {
 };
 
 
-},{}],7:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 module.exports = Object.keys || require('./shim');
 
 
-},{"./shim":9}],8:[function(require,module,exports){
+},{"./shim":11}],10:[function(require,module,exports){
 var toString = Object.prototype.toString;
 
 module.exports = function isArguments(value) {
@@ -1142,7 +1242,7 @@ module.exports = function isArguments(value) {
 };
 
 
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 (function () {
 	"use strict";
 
@@ -1206,7 +1306,7 @@ module.exports = function isArguments(value) {
 }());
 
 
-},{"./foreach":6,"./isArguments":8}],10:[function(require,module,exports){
+},{"./foreach":8,"./isArguments":10}],12:[function(require,module,exports){
 var App =
 exports =
 module.exports =
@@ -1301,7 +1401,7 @@ function configureApp($routeProvider, $locationProvider, $httpProvider) {
 }
 
 
-},{"./http_interceptor":35,"./strider":38}],11:[function(require,module,exports){
+},{"./http_interceptor":37,"./strider":40}],13:[function(require,module,exports){
 var App = require('../app');
 
 App.controller('AccountCtrl', ['$scope', '$sce', '$location', 'Strider', AccountCtrl]);
@@ -1458,7 +1558,7 @@ function JobController($scope, $element, $attrs) {
     });
   }
 }
-},{"../app":10}],12:[function(require,module,exports){
+},{"../app":12}],14:[function(require,module,exports){
 
 var app = require('../app');
 
@@ -1524,7 +1624,7 @@ function AlertsCtrl($scope, $sce) {
     }, 1000);
   };
 }
-},{"../app":10}],13:[function(require,module,exports){
+},{"../app":12}],15:[function(require,module,exports){
 var md5         = require('../lib/md5');
 var App         = require('../app');
 var fixTemplate = require('./config/_fix_template');
@@ -1931,7 +2031,7 @@ function ConfigCtrl($scope, $routeParams, $sce, $location, Strider) {
 
   };
 }
-},{"../app":10,"../lib/md5":37,"./config/_fix_template":14}],14:[function(require,module,exports){
+},{"../app":12,"../lib/md5":39,"./config/_fix_template":16}],16:[function(require,module,exports){
 module.exports = fixTemplate;
 
 function fixTemplate(s) {
@@ -1939,7 +2039,7 @@ function fixTemplate(s) {
     replace(/\[\[/g, '{{').
     replace(/\]\]/g, '}}');
 }
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var App = require('../../app');
 
 App.controller('Config.CollaboratorsCtrl', ['$scope', 'Strider', CollaboratorsCtrl]);
@@ -1992,7 +2092,7 @@ function remove(ar, item) {
   ar.splice(ar.indexOf(item), 1);
 }
 
-},{"../../app":10}],16:[function(require,module,exports){
+},{"../../app":12}],18:[function(require,module,exports){
 var App = require('../../app');
 
 App.controller('Config.EnvironmentCtrl', ['$scope', EnvironmentCtrl]);
@@ -2018,7 +2118,7 @@ function EnvironmentCtrl($scope){
     $scope.save();
   };
 }
-},{"../../app":10}],17:[function(require,module,exports){
+},{"../../app":12}],19:[function(require,module,exports){
 var App = require('../../app');
 
 App.controller('Config.GithubCtrl', ['$scope', 'Strider', GithubCtrl]);
@@ -2089,7 +2189,7 @@ function GithubCtrl($scope, Strider) {
   };
 
 }
-},{"../../app":10}],18:[function(require,module,exports){
+},{"../../app":12}],20:[function(require,module,exports){
 var App = require('../../app');
 
 App.controller('Config.HerokuController', ['$scope', 'Strider', HerokuCtrl]);
@@ -2130,7 +2230,7 @@ function HerokuCtrl($scope, Strider) {
     }
   };
 }
-},{"../../app":10}],19:[function(require,module,exports){
+},{"../../app":12}],21:[function(require,module,exports){
 var App = require('../../app');
 
 App.controller('Config.JobController', ['$scope', JobController]);
@@ -2153,7 +2253,7 @@ function JobController($scope) {
     };
   }
 }
-},{"../../app":10}],20:[function(require,module,exports){
+},{"../../app":12}],22:[function(require,module,exports){
 var App = require('../../app');
 
 App.controller('Config.NodeController', ['$scope', NodeController]);
@@ -2180,7 +2280,7 @@ function NodeController($scope) {
     $scope.save();
   };
 }
-},{"../../app":10}],21:[function(require,module,exports){
+},{"../../app":12}],23:[function(require,module,exports){
 var App = require('../../app');
 
 App.controller('Config.RunnerController', ['$scope', RunnerController]);
@@ -2203,7 +2303,7 @@ function RunnerController($scope) {
   };
 
 }
-},{"../../app":10}],22:[function(require,module,exports){
+},{"../../app":12}],24:[function(require,module,exports){
 var App = require('../../app');
 
 App.controller('Config.SauceCtrl', ['$scope', SauceCtrl]);
@@ -2270,7 +2370,7 @@ function parseName(name) {
 function serializeName(browser) {
   return browser.platform + '-' + browser.browserName + '-' + browser.version;
 }
-},{"../../app":10}],23:[function(require,module,exports){
+},{"../../app":12}],25:[function(require,module,exports){
 var App = require('../../app');
 
 App.controller('Config.WebhooksCtrl', ['$scope', WebhooksCtrl]);
@@ -2305,7 +2405,7 @@ function WebhooksCtrl($scope) {
     $scope.hooks.push({});
   };
 }
-},{"../../app":10}],24:[function(require,module,exports){
+},{"../../app":12}],26:[function(require,module,exports){
 var App = require('../app');
 
 App.controller('DashboardCtrl', ['$scope', 'Strider', DashboardCtrl]);
@@ -2335,7 +2435,7 @@ function DashboardCtrl($scope, Strider) {
   };
 
 }
-},{"../app":10}],25:[function(require,module,exports){
+},{"../app":12}],27:[function(require,module,exports){
 var App = require('../app');
 
 App.controller('ErrorCtrl', ['$scope', '$rootScope', '$location', '$sce', ErrorCtrl]);
@@ -2369,7 +2469,7 @@ function ErrorCtrl($scope, $rootScope, $location, $sce) {
     });
   }
 }
-},{"../app":10}],26:[function(require,module,exports){
+},{"../app":12}],28:[function(require,module,exports){
 var App = require('../app');
 var e   = encodeURIComponent;
 
@@ -2571,7 +2671,7 @@ function updateFavicon(value) {
     setFavicon(value);
   }
 }
-},{"../app":10}],27:[function(require,module,exports){
+},{"../app":12}],29:[function(require,module,exports){
 var App = require('../app');
 
 App.controller('LoginCtrl', ['$scope', '$location', '$rootScope', 'Strider', LoginCtrl]);
@@ -2587,7 +2687,7 @@ function LoginCtrl($scope, $location, $rootScope, Strider) {
     });
   };
 }
-},{"../app":10}],28:[function(require,module,exports){
+},{"../app":12}],30:[function(require,module,exports){
 var App = require('../app');
 
 App.controller('LogoutCtrl', ['$scope', '$rootScope', '$location', 'Strider', LogoutCtrl]);
@@ -2600,7 +2700,7 @@ function LogoutCtrl($scope, $rootScope, $location, Strider) {
   });
 
 }
-},{"../app":10}],29:[function(require,module,exports){
+},{"../app":12}],31:[function(require,module,exports){
 var App = require('../app');
 
 function validName(name) {
@@ -2661,7 +2761,7 @@ function ManualCtrl($scope, Strider) {
     }
   }
 }
-},{"../app":10}],30:[function(require,module,exports){
+},{"../app":12}],32:[function(require,module,exports){
 var App = require('../app');
 
 App.controller('ProjectsCtrl', ['$scope', '$sce', 'Strider', ProjectsCtrl]);
@@ -2735,13 +2835,13 @@ function ProjectsCtrl($scope, $sce, Strider) {
   });
 
 }
-},{"../app":10}],31:[function(require,module,exports){
+},{"../app":12}],33:[function(require,module,exports){
 var App = require('../app');
 
 App.controller('ReloadCtrl', ['$location', function($location) {
   window.location = $location.path();
 }]);
-},{"../app":10}],32:[function(require,module,exports){
+},{"../app":12}],34:[function(require,module,exports){
 var App = require('../app');
 
 App.controller('RootCtrl', ['$scope', '$rootScope', '$location', 'Strider', RootCrtl]);
@@ -2771,7 +2871,7 @@ function RootCrtl($scope, $rootScope, $location, Strider) {
 
   getUser();
 }
-},{"../app":10}],33:[function(require,module,exports){
+},{"../app":12}],35:[function(require,module,exports){
 var app = require('../app');
 
 app.filter('ansi', ['$sce', function ($sce) {
@@ -3002,7 +3102,7 @@ function ansifilter(data, plaintext, cache) {
 }
 
 
-},{"../app":10}],34:[function(require,module,exports){
+},{"../app":12}],36:[function(require,module,exports){
 var App = require('../app');
 
 App.filter('percentage', function () {
@@ -3013,7 +3113,7 @@ App.filter('percentage', function () {
   }
 });
 
-},{"../app":10}],35:[function(require,module,exports){
+},{"../app":12}],37:[function(require,module,exports){
 module.exports = ['$rootScope', '$q', function($scope, $q) {
 
   function success(response) {
@@ -3042,7 +3142,8 @@ module.exports = ['$rootScope', '$q', function($scope, $q) {
   }
 
 }];
-},{}],36:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
+var log          = require('bows')('job_store');
 var EventEmitter = require('events').EventEmitter;
 var inherits     = require('util').inherits;
 var extend       = require('xtend');
@@ -3094,7 +3195,7 @@ var statusHandlers = {
       }
       extend(parent[last], data.data)
     } else {
-      console.log('Invalid "plugin data" method received from plugin', data.plugin, data.method, data)
+      log('Invalid "plugin data" method received from plugin', data.plugin, data.method, data)
     }
   },
 
@@ -3162,10 +3263,6 @@ function JobStore() {
     public: [],
     yours: []
   };
-
-  setInterval(function() {
-    console.log('STORE JOBS:', store.jobs);
-  }, 5000);
 }
 
 inherits(JobStore, EventEmitter);
@@ -3178,6 +3275,7 @@ var JS = JobStore.prototype;
 JS.dashboard = function dashboard(cb) {
   var self = this;
   this.socket.emit('dashboard:jobs', function(jobs) {
+    log('dashboard jobs', jobs);
     self.jobs.yours = jobs.yours;
     self.jobs.public = jobs.public;
     self.jobs.yours.forEach(fixJob);
@@ -3206,6 +3304,7 @@ JS.connect = function connect(socket, changeCallback) {
 /// setJobs
 
 JS.setJobs = function setJobs(jobs) {
+  log('setJobs', jobs);
   this.jobs.yours = jobs.yours;
   this.jobs.public = jobs.public;
   this.jobs.yours.forEach(fixJob);
@@ -3216,6 +3315,7 @@ JS.setJobs = function setJobs(jobs) {
 /// update - handle update event
 
 JS.update = function update(event, args, access, dontchange) {
+  log('update', arguments);
   var id = args.shift()
     , job = this.job(id, access)
     , handler = statusHandlers[event];
@@ -3369,7 +3469,7 @@ var SKELS = {
     commands: []
   }
 }
-},{"events":2,"util":3,"xtend":5}],37:[function(require,module,exports){
+},{"bows":1,"events":4,"util":5,"xtend":7}],39:[function(require,module,exports){
 function md5cycle(x, k) {
 var a = x[0], b = x[1], c = x[2], d = x[3];
 
@@ -3557,7 +3657,8 @@ return (msw << 16) | (lsw & 0xFFFF);
 
 
 module.exports = md5;
-},{}],38:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
+var log      = require('bows')('strider');
 var App      = require('./app');
 var JobStore = require('./job_store');
 var jobStore = JobStore();
@@ -3599,6 +3700,7 @@ function changed() {
 /// connect websocket
 
 S.connect = function(scope, jobs, cb) {
+  log('connect');
   if (typeof jobs == 'function') {
     cb = jobs;
     jobs = undefined;
@@ -3634,10 +3736,12 @@ S.connect = function(scope, jobs, cb) {
 /// deploy
 
 S.deploy = function deploy(project) {
+  log('deploy', project.name);
   this.socket.emit('deploy', project.name || project);
 };
 
 S.test = function test(project) {
+  log('test', project.name);
   this.socket.emit('test', project.name || project);
 };
 
@@ -3683,5 +3787,5 @@ S.request = function(method, url, body, cb) {
 
   return req;
 }
-},{"./app":10,"./job_store":36}]},{},[10,11,12,13,24,25,26,27,28,29,30,31,32,14,15,16,17,18,19,20,21,22,23,33,34])
+},{"./app":12,"./job_store":38,"bows":1}]},{},[12,13,14,15,26,27,28,29,30,31,32,33,34,16,17,18,19,20,21,22,23,24,25,35,36])
 ;

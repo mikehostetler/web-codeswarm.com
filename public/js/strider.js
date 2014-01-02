@@ -1,3 +1,4 @@
+var log      = require('bows')('strider');
 var App      = require('./app');
 var JobStore = require('./job_store');
 var jobStore = JobStore();
@@ -39,6 +40,7 @@ function changed() {
 /// connect websocket
 
 S.connect = function(scope, jobs, cb) {
+  log('connect');
   if (typeof jobs == 'function') {
     cb = jobs;
     jobs = undefined;
@@ -74,10 +76,12 @@ S.connect = function(scope, jobs, cb) {
 /// deploy
 
 S.deploy = function deploy(project) {
+  log('deploy', project.name);
   this.socket.emit('deploy', project.name || project);
 };
 
 S.test = function test(project) {
+  log('test', project.name);
   this.socket.emit('test', project.name || project);
 };
 

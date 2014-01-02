@@ -1,3 +1,4 @@
+var log          = require('bows')('job_store');
 var EventEmitter = require('events').EventEmitter;
 var inherits     = require('util').inherits;
 var extend       = require('xtend');
@@ -49,7 +50,7 @@ var statusHandlers = {
       }
       extend(parent[last], data.data)
     } else {
-      console.log('Invalid "plugin data" method received from plugin', data.plugin, data.method, data)
+      log('Invalid "plugin data" method received from plugin', data.plugin, data.method, data)
     }
   },
 
@@ -117,10 +118,6 @@ function JobStore() {
     public: [],
     yours: []
   };
-
-  setInterval(function() {
-    console.log('STORE JOBS:', store.jobs);
-  }, 5000);
 }
 
 inherits(JobStore, EventEmitter);
@@ -133,6 +130,7 @@ var JS = JobStore.prototype;
 JS.dashboard = function dashboard(cb) {
   var self = this;
   this.socket.emit('dashboard:jobs', function(jobs) {
+    log('dashboard jobs', jobs);
     self.jobs.yours = jobs.yours;
     self.jobs.public = jobs.public;
     self.jobs.yours.forEach(fixJob);
@@ -161,6 +159,7 @@ JS.connect = function connect(socket, changeCallback) {
 /// setJobs
 
 JS.setJobs = function setJobs(jobs) {
+  log('setJobs', jobs);
   this.jobs.yours = jobs.yours;
   this.jobs.public = jobs.public;
   this.jobs.yours.forEach(fixJob);
@@ -171,6 +170,7 @@ JS.setJobs = function setJobs(jobs) {
 /// update - handle update event
 
 JS.update = function update(event, args, access, dontchange) {
+  log('update', arguments);
   var id = args.shift()
     , job = this.job(id, access)
     , handler = statusHandlers[event];
