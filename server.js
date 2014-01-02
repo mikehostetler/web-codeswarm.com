@@ -13,7 +13,7 @@ function handleRequest(req, res) {
   function triedServingStatic(err) {
     if (err) {
       var contentType = req.headers['accept'];
-      var isHTML = contentType && contentType.indexOf('text/html') == 0;
+      var isHTML = contentType && contentType.indexOf('text/html') >= 0;
       if (err.status == 404 && isHTML) {
         fileServer.serveFile('index.html', 200, {}, req, res);
       } else {
