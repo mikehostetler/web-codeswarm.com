@@ -9,6 +9,9 @@ require('http').createServer(handleRequest);
 
 function handleRequest(req, res) {
 
+  /// to prevent buffering
+  req.resume();
+
 
   // proxy github auth to strider
   if (req.url == '/auth/github') return proxy(req, res);
