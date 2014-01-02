@@ -6,7 +6,8 @@
   "dependencies": {
     "node-static": "~0.7.2",
     "http-proxy": "~0.10.4",
-    "xtend": "~2.1.2"
+    "xtend": "~2.1.2",
+    "konphyg": "~1.2.3"
   },
   "scripts": {
     "start": "node index.js"
