@@ -1287,6 +1287,9 @@ function configureApp($routeProvider, $locationProvider, $httpProvider) {
     when('/:owner/:repo/job/:jobid', {
       templateUrl: '/partials/job.html',
       controller: 'JobCtrl'
+    }).
+    otherwise({
+      templateUrl: '/partials/404.html'
     })
   ;
 
@@ -3678,5 +3681,5 @@ S.request = function(method, url, body, cb) {
 
   return req;
 }
-},{"./job_store":36}]},{},[10,11,12,13,25,26,27,28,29,30,31,32,14,15,16,17,18,19,20,21,22,23,33,34,24])
+},{"./job_store":36}]},{},[10,11,12,13,24,25,26,27,28,29,30,31,32,14,15,16,17,18,19,20,21,22,23,33,34])
 ;

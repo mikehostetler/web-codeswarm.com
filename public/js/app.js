@@ -78,6 +78,9 @@ function configureApp($routeProvider, $locationProvider, $httpProvider) {
     when('/:owner/:repo/job/:jobid', {
       templateUrl: '/partials/job.html',
       controller: 'JobCtrl'
+    }).
+    otherwise({
+      templateUrl: '/partials/404.html'
     })
   ;
 
