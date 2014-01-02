@@ -1,15 +1,20 @@
-var Strider = require('./strider');
-
 var App =
 exports =
 module.exports =
 angular.module('BrowserSwarmApp', ['ngRoute', 'ngSanitize']);
 
+/// App Config
+
+var strider = $('meta[name=strider]').attr('content')
+App.value('strider.url', strider);
+
 /// App Configuration
+
+var Strider = require('./strider');
 
 App.
   config(['$routeProvider', '$locationProvider', '$httpProvider', configureApp]).
-  factory('Strider', ['$http', Strider]);
+  factory('Strider', ['strider.url', '$http', Strider]);
 
 function configureApp($routeProvider, $locationProvider, $httpProvider) {
 

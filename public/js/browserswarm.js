@@ -1207,18 +1207,23 @@ module.exports = function isArguments(value) {
 
 
 },{"./foreach":6,"./isArguments":8}],10:[function(require,module,exports){
-var Strider = require('./strider');
-
 var App =
 exports =
 module.exports =
 angular.module('BrowserSwarmApp', ['ngRoute', 'ngSanitize']);
 
+/// App Config
+
+var strider = $('meta[name=strider]').attr('content')
+App.value('strider.url', strider);
+
 /// App Configuration
+
+var Strider = require('./strider');
 
 App.
   config(['$routeProvider', '$locationProvider', '$httpProvider', configureApp]).
-  factory('Strider', ['$http', Strider]);
+  factory('Strider', ['strider.url', '$http', Strider]);
 
 function configureApp($routeProvider, $locationProvider, $httpProvider) {
 
@@ -3553,25 +3558,22 @@ return (msw << 16) | (lsw & 0xFFFF);
 
 module.exports = md5;
 },{}],38:[function(require,module,exports){
+var App      = require('./app');
 var JobStore = require('./job_store');
 var jobStore = JobStore();
 
 exports = module.exports = BuildStrider;
 
-function BuildStrider($http) {
-  return new Strider($http);
+function BuildStrider(striderURL, $http) {
+  return new Strider(striderURL, $http);
 }
 
 
 var socket;
 var scopes = [];
 
-function Strider($http, opts) {
-  if (! opts) opts = {};
-  if (typeof opts == 'string')
-    opts = { url: opts };
-
-  this.url = opts.url || '//localhost:3000';
+function Strider(striderURL, $http) {
+  this.url = striderURL;
 
   this.phases  = JobStore.phases;
 
@@ -3681,5 +3683,5 @@ S.request = function(method, url, body, cb) {
 
   return req;
 }
-},{"./job_store":36}]},{},[10,11,12,13,24,25,26,27,28,29,30,31,32,14,15,16,17,18,19,20,21,22,23,33,34])
+},{"./app":10,"./job_store":36}]},{},[10,11,12,13,24,25,26,27,28,29,30,31,32,14,15,16,17,18,19,20,21,22,23,33,34])
 ;

@@ -1,22 +1,19 @@
+var App      = require('./app');
 var JobStore = require('./job_store');
 var jobStore = JobStore();
 
 exports = module.exports = BuildStrider;
 
-function BuildStrider($http) {
-  return new Strider($http);
+function BuildStrider(striderURL, $http) {
+  return new Strider(striderURL, $http);
 }
 
 
 var socket;
 var scopes = [];
 
-function Strider($http, opts) {
-  if (! opts) opts = {};
-  if (typeof opts == 'string')
-    opts = { url: opts };
-
-  this.url = opts.url || '//localhost:3000';
+function Strider(striderURL, $http) {
+  this.url = striderURL;
 
   this.phases  = JobStore.phases;
 

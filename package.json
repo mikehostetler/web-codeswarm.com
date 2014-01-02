@@ -7,7 +7,8 @@
     "node-static": "~0.7.2",
     "http-proxy": "~0.10.4",
     "xtend": "~2.1.2",
-    "konphyg": "~1.2.3"
+    "konphyg": "~1.2.3",
+    "hogan.js": "~2.0.0"
   },
   "scripts": {
     "start": "node index.js"

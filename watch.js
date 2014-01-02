@@ -12,6 +12,7 @@ var pending = false;
 
 var watch = [
   'public/js/app.js',
+  'public/js/strider.js',
   'public/js/controllers/**/*.js',
   'public/js/filters/**/*.js',
   'public/js/directives/**/*.js',
