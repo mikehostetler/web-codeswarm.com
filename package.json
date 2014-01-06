@@ -4,22 +4,14 @@
   "version": "0.0.1",
   "description": "BrowserSwarm Web Interface",
   "dependencies": {
-    "node-static": "~0.7.2",
-    "http-proxy": "~0.10.4",
-    "xtend": "~2.1.2",
-    "konphyg": "~1.2.3",
-    "hogan.js": "~2.0.0",
-    "bows": "~0.3.0"
+    "browserswarm-ui": "git@github.com:BrowserSwarm/browserswarm-ui"
   },
   "scripts": {
     "start": "node index.js"
   },
-  "repository": "",
-  "author": "",
-  "license": "",
-  "devDependencies": {
-    "browserify": "~2.35.0",
-    "gaze": "~0.4.3",
-    "colors": "~0.6.2"
-  }
+    "repository": {
+    "type": "git",
+    "url": "git://github.com/BrowserSwarm/web-browserswarm.com.git"
+  },
+  "author": "pgte"
 }
