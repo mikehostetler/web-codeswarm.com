@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node index.js"
   },
-    "repository": {
+  "repository": {
     "type": "git",
     "url": "git://github.com/BrowserSwarm/web-browserswarm.com.git"
   },
