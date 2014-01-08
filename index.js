@@ -2,7 +2,7 @@ var server = require('browserswarm-ui');
 
 server.config({
   strider: {
-    url: "http://localhost:3000"
+    url: process.env.STRIDER_URL || "http://localhost:3000"
   }
 })
 
